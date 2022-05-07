@@ -15,7 +15,7 @@ class Game:
         self.display_elements()
     def display_elements(self):
         
-        rect_push = pygame.Rect((100, 100), (100, 30))
+        rect_push = pygame.Rect((100, 100), (100, 100))
         self.button_push = pygame_gui.elements.UIButton(relative_rect = rect_push,
                                                         text = "Push",
                                                         manager = self.manager)
