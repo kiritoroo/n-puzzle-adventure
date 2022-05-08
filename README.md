@@ -17,7 +17,7 @@
 6. Submit a pull request :D
 
 ## Author
-> GitHub [Kiritoro](https://github.com/kiritoroo) <
-> GitHub [thang1610200](https://github.com/thang1610200) <
-> GitHub [Hotaka15](https://github.com/Hotaka15) <
+GitHub [Kiritoro](https://github.com/kiritoroo)
+GitHub [thang1610200](https://github.com/thang1610200)
+GitHub [Hotaka15](https://github.com/Hotaka15)
 
