@@ -1,10 +1,13 @@
 ## Features
 
-- 8 Puzzle Game
-- Algorithm Simulator
-- Compare Algorithm
+- 8 Puzzle Game 🎮
+- Algorithm Simulator 🔧
+- Compare Algorithm 🍉
 
-## Troubleshooting
+## Request
+- Numpy: `pip install numpy`
+- Pygame: `pip install pygame`
+- Pygame GUI: `pip install pygame_gui`
 
 
 ## Contributing
