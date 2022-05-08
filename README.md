@@ -1,46 +1,8 @@
-# Discord Presence
-
-> Update your discord status with a rich presence.
-
-<div align="center">
-	<p>
-		<a href="https://marketplace.visualstudio.com/items?itemName=icrawl.discord-vscode">
-			<img alt="Visual Studio Marketplace Version" src="https://img.shields.io/visual-studio-marketplace/v/icrawl.discord-vscode?label=Visual%20Studio%20Marketplace">
-		</a>
-		<a href="https://marketplace.visualstudio.com/items?itemName=icrawl.discord-vscode">
-			<img alt="Visual Studio Marketplace Downloads" src="https://img.shields.io/visual-studio-marketplace/d/icrawl.discord-vscode">
-		</a>
-		<a href="https://marketplace.visualstudio.com/items?itemName=icrawl.discord-vscode">
-			<img alt="Visual Studio Marketplace Rating" src="https://img.shields.io/visual-studio-marketplace/r/icrawl.discord-vscode">
-		</a>
-	</p>
-	<p>
-		<a href="https://open-vsx.org/extension/icrawl/discord-vscode">
-			<img alt="Open VSX Version" src="https://img.shields.io/open-vsx/v/icrawl/discord-vscode?label=OpenVSX%20Marketplace">
-		</a>
-		<a href="https://open-vsx.org/extension/icrawl/discord-vscode">
-			<img alt="Open VSX Downloads" src="https://img.shields.io/open-vsx/dt/icrawl/discord-vscode">
-		</a>
-		<a href="https://open-vsx.org/extension/icrawl/discord-vscode">
-			<img alt="Open VSX Rating" src="https://img.shields.io/open-vsx/rating/icrawl/discord-vscode">
-		</a>
-	</p>
-	<p>
-		<a href="https://discord.gg/cZSWqAF">
-			<img src="https://canary.discordapp.com/api/guilds/424963290989461514/embed.png" alt="Discord server">
-		</a>
-	</p>
-</div>
-
 ## Features
 
-- Shows what you are editing in VSCode
-- Support for over 140 of the most popular languages
-- Enable/Disable Rich Presence for individual workspaces (enabled by default)
-- Custom string support
-- Stable or Insiders build detection
-- Debug mode detection
-- Easily manually reconnect to Discord
+- 8 Puzzle Game
+- Algorithm Simulator
+- Compare Algorithm
 
 ## Troubleshooting
 
