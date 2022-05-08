@@ -1,33 +1,22 @@
 <p align="center">
   <img width="140" src="https://th.bing.com/th/id/R.e38895a159ff5bbd8da2f1040b61d219?rik=295MoNJgHQ5mdw&riu=http%3a%2f%2fdomoticx.com%2fwp-content%2fuploads%2f2015%2f03%2fpygame-logo.gif&ehk=9x4o%2b8IHlhiml6%2fDd7aXtzZycOqLsy76QfuqCOqf%2fNw%3d&risl=&pid=ImgRaw&r=0&sres=1&sresct=1" />  
-  <h2 align="center">GitHub Profile Trophy</h2>
-  <p align="center">🎮 Add dynamically generated GitHub Stat Trophies on your readme</p>
-</p>
+  <h2 align="center">🎮 AI Final Project</h2>
 <p align="center">
-  <a href="https://github.com/ryo-ma/github-profile-trophy/issues">
-    <img src="https://img.shields.io/github/issues/ryo-ma/github-profile-trophy"/> 
+  <a href="https://github.com/kiritoroo/AI_Final_Project/issues">
+    <img src="https://img.shields.io/github/issues/kiritoroo/AI_Final_Project"/> 
   </a>
-  <a href="https://github.com/ryo-ma/github-profile-trophy/network/members">
-    <img src="https://img.shields.io/github/forks/ryo-ma/github-profile-trophy"/> 
+  <a href="https://github.com/kiritoroo/AI_Final_Project/network/members">
+    <img src="https://img.shields.io/github/forks/kiritoroo/AI_Final_Project"/> 
   </a>  
-  <a href="https://github.com/ryo-ma/github-profile-trophy/stargazers">
-    <img src="https://img.shields.io/github/stars/ryo-ma/github-profile-trophy"/> 
+  <a href="https://github.com/kiritoroo/AI_Final_Project/stargazers">
+    <img src="https://img.shields.io/github/stars/kiritoroo/AI_Final_Project"/> 
   </a>
-    <a href="https://github.com/ryo-ma/github-profile-trophy/LICENSE">
-    <img src="https://img.shields.io/github/license/ryo-ma/github-profile-trophy"/> 
-  </a>
-</p>
-<p align="center">
-  </a>
-    <a href="https://twitter.com/intent/tweet?text=Add%20dynamically%20generated%20GitHub%20Trophy%20on%20your%20readme%0D%0A&url=https%3A%2F%2Fgithub.com%2Fryo-ma%2Fgithub-profile-trophy">
-    <img src="https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fryo-ma%2Fgithub-profile-trophy"/> 
+    <a href="https://github.com/kiritoroo/AI_Final_Project/LICENSE">
+    <img src="https://img.shields.io/github/license/kiritoroo/AI_Final_Project"/> 
   </a>
 </p>
 <p align="center">
-  You can use this service for free. I'm looking for sponsors to help us keep up with this service❤️
-</p>
-<p align="center">
-  <a href="https://github.com/sponsors/ryo-ma">
+  <a href="https://github.com/kiritoroo/AI_Final_Project">
     <img src="https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=ff69b4"/> 
   </a>
 </p>
