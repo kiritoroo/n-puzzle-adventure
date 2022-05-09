@@ -8,12 +8,12 @@ clock = pygame.time.Clock()
 
 class Game:
     def __init__(self):
-        self.ui = ui_handler.UI()
-
         pygame.init()
         pygame.display.set_caption('8 Puzzle Report')
-        self.display_surface = pygame.display.set_mode((800, 600))
+
+        self.ui = ui_handler.UI()
         self.clock = pygame.time.Clock()
+        self.display_surface = pygame.display.set_mode((1280, 800))
 
     def run(self):
         last_time = time.time()

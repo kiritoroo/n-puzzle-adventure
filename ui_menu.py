@@ -4,7 +4,7 @@ import pygame_gui
 class UI:
     def __init__(self):
         pygame.init()
-        self.ui_manager = pygame_gui.UIManager((800, 600), 'theme.json')
+        self.ui_manager = pygame_gui.UIManager((1280, 800), 'theme.json')
         self.ui_elements()
 
     def ui_elements(self):
@@ -12,12 +12,14 @@ class UI:
         rect_push = pygame.Rect((100, 100), (100, 100))
         self.button_push = pygame_gui.elements.UIButton(relative_rect = rect_push,
                                                         text = "Push",
-                                                        manager = self.ui_manager)
+                                                        manager = self.ui_manager,
+                                                        object_id="#button_push")
     
     def ui_event(self, _event):
         if _event.type == pygame_gui.UI_BUTTON_PRESSED:
             if _event.ui_element == self.button_push:
-                print('haha')
+                print('press push')
+
         self.ui_manager.process_events(_event)
 
             
