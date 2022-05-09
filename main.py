@@ -1,19 +1,20 @@
 # -*- coding: utf-8 -*-
+import this
 import pygame
 import sys, time
 
-import ui_handler
-
-clock = pygame.time.Clock()
+import settings
+import colors
+import handler_frame
 
 class Game:
     def __init__(self):
         pygame.init()
         pygame.display.set_caption('8 Puzzle Report')
 
-        self.ui = ui_handler.UI()
+        self.handlerFrame =  handler_frame.HandlerFrame()
         self.clock = pygame.time.Clock()
-        self.display_surface = pygame.display.set_mode((1280, 800))
+        self.display_surface = pygame.display.set_mode((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT))
 
     def run(self):
         last_time = time.time()
@@ -26,15 +27,15 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-                self.ui.ui_event(event)
+                self.handlerFrame.current_frame.ui_event(event)
 
             # Update Display
-            self.ui.update(dt)
-            
-            self.display_surface.fill('WHITE')
+            self.handlerFrame.current_frame.update(dt)
+
+            self.display_surface.fill(colors.WHITE)
 
             # Render Display
-            self.ui.render(self.display_surface)
+            self.handlerFrame.current_frame.render(self.display_surface)
             pygame.display.update()
             self.clock.tick(60)
 

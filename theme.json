@@ -24,13 +24,6 @@
        "misc":
        {
           "tool_tip_delay": "1.5"
-       },
-       "font":
-       {
-           "name": "default",
-           "size": "14",
-           "bold": "1",
-           "italic": "0"
        }
     }
 }
