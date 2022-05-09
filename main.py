@@ -11,14 +11,15 @@ class Game:
         pygame.display.set_caption('8 Puzzle Report')
         self.display_surface = pygame.display.set_mode((800, 600))
         self.clock = pygame.time.Clock()
-        self.manager = pygame_gui.UIManager((800, 600), 'theme.json')
-        self.display_elements()
-    def display_elements(self):
+        self.ui_manager = pygame_gui.UIManager((800, 600), 'theme.json')
+        self.gui_elements()
+        
+    def gui_elements(self):
         
         rect_push = pygame.Rect((100, 100), (100, 100))
         self.button_push = pygame_gui.elements.UIButton(relative_rect = rect_push,
                                                         text = "Push",
-                                                        manager = self.manager)
+                                                        manager = self.ui_manager)
 
     def run(self):
         last_time = time.time()
@@ -31,12 +32,12 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-                self.manager.process_events(event)
-            self.manager.update(dt)
+                self.ui_manager.process_events(event)
+            self.ui_manager.update(dt)
     
 
-            self.display_surface.fill('GREEN')
-            self.manager.draw_ui(self.display_surface)
+            self.display_surface.fill('WHITE')
+            self.ui_manager.draw_ui(self.display_surface)
 
             pygame.display.update()
             self.clock.tick(60)
