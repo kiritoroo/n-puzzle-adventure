@@ -1,30 +1,94 @@
 {
-
-    "button":
-    {
- 
-       "colours":
+   "button":
+   {
+      "colours":
+      {
+         "normal_bg": "#0074B7",
+         "hovered_bg": "#FFFFFF",
+         "disabled_bg": "#0074B7",
+         "selected_bg": "#0074B7",
+         "active_bg": "#193784",
+         "normal_text": "#FFFFFF",
+         "hovered_text": "#BFD7ED",
+         "selected_text": "#FFFFFF",
+         "disabled_text": "#6d736f",
+         "active_text": "#FFFFFF"
+      },
+      "misc":
+      {
+         "tool_tip_delay": "1.5"
+         
+      },
+      "font":
+      {
+          "name": "fira_code",
+          "size": "15",
+          "bold": "1",
+          "italic": "0"
+      }
+   },
+       "#button_exit":
        {
-          "normal_bg": "#0074B7",
-          "hovered_bg": "#60A3D9",
-          "disabled_bg": "#0074B7",
-          "selected_bg": "#0074B7",
-          "active_bg": "#193784",
-          "normal_text": "#FFFFFF",
-          "hovered_text": "#BFD7ED",
-          "selected_text": "#FFFFFF",
-          "disabled_text": "#6d736f",
-          "active_text": "#FFFFFF",
-          "normal_border": "#FFFFFF",
-          "hovered_border": "#B0B0B0",
-          "disabled_border": "#808080",
-          "selected_border": "#003B73",
-          "active_border": "#003B73"
+          "colours":
+          {
+             "normal_bg": "#bb1a1a",
+             "hovered_bg": "#60A3D9",
+             "disabled_bg": "#0074B7",
+             "selected_bg": "#0074B7",
+             "active_bg": "#193784",
+             "normal_text": "#FFFFFF",
+             "hovered_text": "#BFD7ED",
+             "selected_text": "#FFFFFF",
+             "disabled_text": "#6d736f",
+             "active_text": "#FFFFFF"
+          },
+          "misc":
+          {
+             "tool_tip_delay": "1.5"
+             
+          },
+          "font":
+          {
+              "name": "fira_code",
+              "size": "15",
+              "bold": "1",
+              "italic": "0"
+          }
        },
-       "misc":
-       {
-          "tool_tip_delay": "1.5"
-       }
+    "label":
+    {
+        "colours":
+        {
+            "normal_text": "#9fa8aa"
+        },
+        "font":
+        {
+            "name": "fira_code",
+            "size": "15",
+            "bold": "0",
+            "italic": "0"
+        }
+    },
+    "#label_title":
+    {
+        "colours":
+        {
+            "normal_text": "#9fa8aa"
+        },
+        "font":
+        {
+            "name": "fira_code",
+            "size": "40",
+            "bold": "1",
+            "italic": "0"
+        }
+    },
+    "panel":
+    {
+        "colours":
+        {
+            "dark_bg":"#a0aeb1"
+        }
     }
 }
-    
+   
