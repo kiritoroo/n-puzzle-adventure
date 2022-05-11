@@ -33,7 +33,6 @@ class Game:
             self.handlerFrame.current_frame.update(dt)
 
             # Render Display
-
             self.display_surface.fill(colors.WHITE)
 
             self.handlerFrame.current_frame.render(self.display_surface)

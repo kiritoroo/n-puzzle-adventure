@@ -109,6 +109,41 @@
             "bold": "1",
             "italic": "0"
         }
+    },
+    "#label_guide":
+    {
+        "colours":
+        {
+            "normal_text": "#ffffffff"
+        },
+        "font":
+        {
+            "name": "fira_code",
+            "size": "15",
+            "bold": "1",
+            "italic": "0"
+        }
+    },
+    "#label_time":
+    {
+        "colours":
+        {
+            "normal_text": "#9fa8aa"
+        },
+        "font":
+        {
+            "name": "fira_code",
+            "size": "20",
+            "bold": "1",
+            "italic": "0"
+        }
+    },
+    "panel":
+    {
+        "colours":
+        {
+            "dark_bg":"#a0aeb1"
+        }
     }
 }
    
