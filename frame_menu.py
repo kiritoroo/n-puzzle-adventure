@@ -1,5 +1,6 @@
 import pygame
 import pygame_gui
+import sys
 
 import settings
 
@@ -62,6 +63,15 @@ class Frame:
         if _event.type == pygame_gui.UI_BUTTON_PRESSED:
             if _event.ui_element == self.button_Npuzzlegame:
                 self.frame_handler.set_current_frame('frame_game')
+            elif _event.ui_element == self.button_Algorithm:
+                self.frame_handler.set_current_frame('frame_simulator')
+            elif _event.ui_element == self.button_Compare:
+                self.frame_handler.set_current_frame('frame_compare')
+            elif _event.ui_element == self.button_Exit:
+                pygame.quit()
+                sys.exit()
+            else:
+                return
 
         self.ui_manager.process_events(_event)
 

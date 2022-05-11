@@ -13,14 +13,14 @@ class Frame:
     def ui_elements(self):
         
         rect_push = pygame.Rect((100, 100), (100, 100))
-        self.button_BACK = pygame_gui.elements.UIButton(relative_rect = rect_push,
+        self.button_back = pygame_gui.elements.UIButton(relative_rect = rect_push,
                                                         text = "Back",
                                                         manager = self.ui_manager,
-                                                        object_id="#button_push")
+                                                        object_id="#button_back")
     
     def ui_event(self, _event):
         if _event.type == pygame_gui.UI_BUTTON_PRESSED:
-            if _event.ui_element == self.button_BACK:
+            if _event.ui_element == self.button_back:
                 self.frame_handler.set_current_frame('frame_menu')
 
         self.ui_manager.process_events(_event)

@@ -32,12 +32,13 @@ class Game:
             # Update Display
             self.handlerFrame.current_frame.update(dt)
 
+            # Render Display
+
             self.display_surface.fill(colors.WHITE)
 
-            # Render Display
             self.handlerFrame.current_frame.render(self.display_surface)
             pygame.display.update()
-            self.clock.tick(60)
+            self.clock.tick(settings.FRAME_RATE)
 
 if __name__ == '__main__':
     game = Game()
