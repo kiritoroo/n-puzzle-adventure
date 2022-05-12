@@ -2,12 +2,15 @@ import pygame
 import pygame_gui
 
 import settings
+import handler_node
 
 class Frame:
-    def __init__(self, _frame_handler):
+    def __init__(self, _frame_handler, _screen):
         pygame.init()
         self.ui_manager = pygame_gui.UIManager((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT), 'theme.json')
         self.frame_handler = _frame_handler
+        self.screen = _screen
+        self.handlerNode = handler_node.HandlerNode(self.screen)
         self.ui_elements()
 
     def ui_elements(self):
@@ -71,9 +74,12 @@ class Frame:
 
             
     def render(self, _display_surface):
+        self.handlerNode.draw()
         self.ui_manager.draw_ui(_display_surface)
 
     def update(self, _delta_time):
+        self.handlerNode.update()
         self.ui_manager.update(_delta_time)
+
 
 

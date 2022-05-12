@@ -4,10 +4,11 @@ import pygame_gui
 import settings
 
 class Frame:
-    def __init__(self, _frame_handler):
+    def __init__(self, _frame_handler, _screen):
         pygame.init()
         self.ui_manager = pygame_gui.UIManager((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT), 'theme.json')
         self.frame_handler = _frame_handler
+        self.screen = _screen
         self.ui_elements()
 
     def ui_elements(self):
