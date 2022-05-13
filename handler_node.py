@@ -1,6 +1,7 @@
 import pygame
 import node
 import settings
+import numpy
 
 pygame.init()
 
@@ -60,3 +61,7 @@ class HandlerNode:
         self.all_node.append(node)
         for i in range(len(node.children)):
             self.get_all_node(node.children[i])
+    
+    def shuffle_puzzle(self, _node):
+        numpy.random.shuffle(_node.puzzle)
+        _node.set_puzzle(_node.puzzle)

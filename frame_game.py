@@ -1,19 +1,24 @@
 import pygame
 import pygame_gui
-
+import datetime
 import settings
+import time
 import node
 import handler_node
 
+pygame.init()
 class Frame:
     def __init__(self, _frame_handler, _screen):
-        pygame.init()
         self.ui_manager = pygame_gui.UIManager((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT), 'theme.json')
         self.frame_handler = _frame_handler
         self.screen = _screen
         self.handlerNode = handler_node.HandlerNode(self.screen, self)
         self.final_image = None
+        self.init()
         self.ui_elements()
+
+    def init(self):
+        self.is_play = False
 
     def ui_elements(self):
         #Button
@@ -79,6 +84,13 @@ class Frame:
         if _event.type == pygame_gui.UI_BUTTON_PRESSED:
             if _event.ui_element == self.button_Back:
                 self.frame_handler.set_current_frame('frame_menu')
+            if _event.ui_element == self.button_Shuffle:
+                self.handlerNode.shuffle_puzzle(self.handlerNode.root)
+            if _event.ui_element == self.button_Play and not self.is_play:
+                self.is_play = True
+                self.button_Play.visible = False
+                self.start_time = datetime.datetime.now()
+
         if _event.type == pygame_gui.UI_DROP_DOWN_MENU_CHANGED:
                 if _event.text == 'Only Number':
                     self.set_final_image(None)
@@ -93,6 +105,10 @@ class Frame:
         self.ui_manager.draw_ui(_display_surface)
 
     def update(self, _delta_time):
+        if self.is_play:
+            counter_time = int(round(datetime.datetime.now().timestamp())) - int(round(self.start_time.timestamp()))
+            self.label_time.set_text(str(time.strftime('%H:%M:%S', time.gmtime(counter_time))))
+
         self.handlerNode.update()
         self.ui_manager.update(_delta_time)
 

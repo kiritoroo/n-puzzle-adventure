@@ -1,7 +1,7 @@
 from winreg import HKEY_CLASSES_ROOT
 import pygame
 import sys, time
-import numpy as np
+import numpy
 import settings
 import colors
 import image_service
@@ -115,7 +115,7 @@ class Node:
     
     def is_child_contain(self, _child_node):
         for i in range(len(self.children)):
-            if np.array_equal(self.children[i].puzzle, _child_node.puzzle):
+            if numpy.array_equal(self.children[i].puzzle, _child_node.puzzle):
                 return True
         return False
 
@@ -184,7 +184,7 @@ class Node:
         self.is_move_up = False
         
         # Logic
-        next_puzzle = np.zeros(9, dtype = int)
+        next_puzzle = numpy.zeros(9, dtype = int)
         self.copy_puzzle(next_puzzle, self.puzzle)
         temp = next_puzzle[n-3]
         next_puzzle[n-3] = next_puzzle[n]
@@ -235,7 +235,7 @@ class Node:
         self.is_move_right = False
         
         # Logic
-        next_puzzle = np.zeros(9, dtype = int)
+        next_puzzle = numpy.zeros(9, dtype = int)
         self.copy_puzzle(next_puzzle, self.puzzle)
         temp = next_puzzle[n+1]
         next_puzzle[n+1] = next_puzzle[n]
@@ -286,7 +286,7 @@ class Node:
         self.is_move_down = False
 
         # Logic
-        next_puzzle = np.zeros(9, dtype = int)
+        next_puzzle = numpy.zeros(9, dtype = int)
         self.copy_puzzle(next_puzzle, self.puzzle)
         temp = next_puzzle[n+3]
         next_puzzle[n+3] = next_puzzle[n]
@@ -337,7 +337,7 @@ class Node:
         self.is_move_left = False
 
         # Logic 
-        next_puzzle = np.zeros(9, dtype = int)
+        next_puzzle = numpy.zeros(9, dtype = int)
         self.copy_puzzle(next_puzzle, self.puzzle)
         temp = next_puzzle[n-1]
         next_puzzle[n-1] = next_puzzle[n]
