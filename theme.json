@@ -11,7 +11,7 @@
             "normal_text": "#FFFFFF",
             "hovered_text": "#BFD7ED",
             "selected_text": "#FFFFFF",
-            "disabled_text": "#6d736f",
+            "disabled_text": "#FFFAAA",
             "active_text": "#FFFFFF"
         },
         "misc":
@@ -134,6 +134,34 @@
         {
             "name": "fira_code",
             "size": "20",
+            "bold": "1",
+            "italic": "0"
+        }
+    },
+    "#label_dev_1":
+    {
+        "colours":
+        {
+            "normal_text": "0x347AFA"
+        },
+        "font":
+        {
+            "name": "fira_code",
+            "size": "15",
+            "bold": "0",
+            "italic": "0"
+        }
+    },
+    "#label_dev_2":
+    {
+        "colours":
+        {
+            "normal_text": "0x347AFA"
+        },
+        "font":
+        {
+            "name": "fira_code",
+            "size": "15",
             "bold": "1",
             "italic": "0"
         }

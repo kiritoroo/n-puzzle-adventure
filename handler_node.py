@@ -33,26 +33,13 @@ class HandlerNode:
         self.root = node.Node(self.screen, self.start_puzzle, 0, node_size, spawn_point, self)
         self.get_all_node(self.root)
 
-    def update(self):
-        for i in range(len(self.all_node)):
-            self.all_node[i].update()
-        self.get_input()
-    
     def draw(self):
         for i in range(len(self.all_node)):
             self.all_node[i].draw()
-    
-    def get_input(self):
-        keys = pygame.key.get_pressed()
-        
-        if keys[pygame.K_RIGHT]:
-            self.root.move_right()
-        if keys[pygame.K_UP]:
-            self.root.move_up()
-        if keys[pygame.K_DOWN]:
-            self.root.move_down()
-        if keys[pygame.K_LEFT]:
-            self.root.move_left()
+
+    def update(self):
+        for i in range(len(self.all_node)):
+            self.all_node[i].update()
 
     def set_image(self, _path):
         self.root.set_image(_path)
