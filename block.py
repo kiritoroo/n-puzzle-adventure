@@ -20,17 +20,18 @@ class Block():
                         self.rect.top + self.surf.get_height() / 2)
         self.value_surf = settings.font.render(str(self.value), True, colors.BLACK)
         self.value_rect = self.value_surf.get_rect(center = self.value_pos)
-
+        
         if self.image != None:
-            self.image_surf = self.image
-            self.image_rect = self.image_rect.get_rect(topleft = self.pos)
             self.image = pygame.transform.scale(self.image, (self.size, self.size))
+            self.image_surf = self.image
+            self.image_rect = self.image_surf.get_rect(topleft = self.pos)
 
         self.surf.fill(self.color)
 
     def draw(self):
         if self.image != None:
-            self.screen.blit(self.image_surf, self.image_rect)
+            if self.value > 0:
+                self.screen.blit(self.image_surf, self.image_rect)
         else:
             if self.value == 0:
                 self.set_color(colors.GREEN_DEFAULT)
