@@ -134,7 +134,7 @@
         {
             "name": "fira_code",
             "size": "20",
-            "bold": "1",
+            "bold": "0",
             "italic": "0"
         }
     },

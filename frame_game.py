@@ -19,10 +19,11 @@ class Frame:
     def init(self):
         self.is_play = False
         self.is_show_dev = False
-
         self.final_image = None
         self.handlerNode = handler_node.HandlerNode(self.screen, self)
         self.dev_tools = dev_support.DEV(self)
+        self.final_image_puzzle = node.Node(self.screen, self.handlerNode.goal_puzzle, 0, 400, (settings.SCREEN_WIDTH-245, 190), self.handlerNode)
+        self.handlerNode.append_node(self.final_image_puzzle)
 
     def ui_elements(self):
         #Button
@@ -34,7 +35,7 @@ class Frame:
         self.button_Shuffle = pygame_gui.elements.UIButton(relative_rect = rect_Shuffle,
                                                         text = "Shuffle",
                                                         manager = self.ui_manager)
-        rect_Back = pygame.Rect((30, 650), (80, 30))
+        rect_Back = pygame.Rect((30, 650), (100, 50))
         self.button_Back = pygame_gui.elements.UIButton(relative_rect = rect_Back,
                                                         text = "Back",
                                                         manager = self.ui_manager,
@@ -45,44 +46,44 @@ class Frame:
                                                         manager = self.ui_manager,
                                                         object_id = "#button_play" ) 
        
-        #Panel
+        # Panel
         rect_Pane1 = pygame.Rect((30,80), (300, 450))
         self.panel_1 = pygame_gui.elements.ui_panel.UIPanel(relative_rect = rect_Pane1,
                                                             starting_layer_height=0,
                                                             manager= self.ui_manager)
        
-        #Label
+        # Label
         rect_guide = pygame.Rect((20, 0), (300, 50))
         self.label_guide = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
-                                                            text = 'F2 - Close/Open Development Tools',
+                                                            text = 'F2 - Open/Close Development Tools',
                                                             relative_rect = rect_guide,
                                                             object_id = "#label_dev_1")
 
         self.label_up = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
                                                             text = "Press ↑ to UP",
-                                                            relative_rect = pygame.Rect((80,270), (200, 180)),
+                                                            relative_rect = pygame.Rect((70,270), (200, 180)),
                                                             object_id = "#label_guide")
         self.label_down = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
                                                             text = "Press ↓ to DOWN",
-                                                            relative_rect = pygame.Rect((90,300), (200, 180)),
+                                                            relative_rect = pygame.Rect((80,300), (200, 180)),
                                                             object_id = "#label_guide")
         self.label_right = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
                                                             text = "Press → to RIGHT",
-                                                            relative_rect = pygame.Rect((95,330), (200, 180)),
+                                                            relative_rect = pygame.Rect((85,330), (200, 180)),
                                                             object_id = "#label_guide")
         self.label_left = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
                                                             text = "Press ← to LEFT",
-                                                            relative_rect = pygame.Rect((90,360), (200, 180)),
+                                                            relative_rect = pygame.Rect((80,360), (200, 180)),
                                                             object_id = "#label_guide")
         self.label_time = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
                                                             text = "00:00:00",
                                                             relative_rect = pygame.Rect((1000,270), (200, 180)),
                                                             object_id = "#label_time")
                                    
-        #Picture
+        # Picture
         self.picture_box1 = None
 
-        #Drop down
+        # Drop down
         rect_choose_picture = pygame.Rect((100,100), (150, 60))
         picture_options = ['Only Number', 'Picture 1', 'Picture 2']
         self.dropdown_choose_picture = pygame_gui.elements.UIDropDownMenu(options_list = picture_options,
@@ -99,7 +100,17 @@ class Frame:
         if self.is_play:
             counter_time = int(round(datetime.datetime.now().timestamp())) - int(round(self.start_time.timestamp()))
             self.label_time.set_text(str(time.strftime('%H:%M:%S', time.gmtime(counter_time))))
-        
+            if self.handlerNode.root.is_same_puzzle(self.handlerNode.goal_puzzle):
+                # Dialog message
+                dialog_msg = '<b>You Win<br><br>Total time: '+str(self.label_time.text)+'</b><br>'
+                rect_win = pygame.Rect((settings.SCREEN_WIDTH/2 - (300/2), settings.SCREEN_HEIGHT/2 - (150/2)), (300, 150))
+                dialog_win = pygame_gui.windows.ui_confirmation_dialog.UIConfirmationDialog(rect = rect_win,
+                                                                                        action_long_desc = dialog_msg,
+                                                                                        window_title ='Congratulations',
+                                                                                        manager = self.ui_manager)
+                self.reset()
+                self.is_play = False
+
         self.get_input()
         self.handlerNode.update()
         self.ui_manager.update(_delta_time)
@@ -122,7 +133,7 @@ class Frame:
             if _event.ui_element == self.button_Play and not self.is_play:
                 self.is_play = True
                 self.button_Play.visible = False
-                self.button_Shuffle.disable()
+                self.button_Shuffle.visible = False
                 self.dropdown_choose_picture.disable()
                 self.start_time = datetime.datetime.now()
 
@@ -148,6 +159,12 @@ class Frame:
             self.handlerNode.root.move_down()
         if keys[pygame.K_LEFT]:
             self.handlerNode.root.move_left()
+    def reset(self):
+        self.handlerNode.shuffle_puzzle(self.handlerNode.root)
+        self.label_time.set_text('00:00:00')
+        self.button_Play.visible = True
+        self.button_Shuffle.visible = True
+        self.dropdown_choose_picture.enable()
 
     def set_final_image(self, _path):
         if _path == None:

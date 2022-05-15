@@ -44,11 +44,14 @@ class HandlerNode:
     def set_image(self, _path):
         self.root.set_image(_path)
 
-    def get_all_node(self, node):
-        self.all_node.append(node)
-        for i in range(len(node.children)):
-            self.get_all_node(node.children[i])
+    def get_all_node(self, _node):
+        self.all_node.append(_node)
+        for i in range(len(_node.children)):
+            self.get_all_node(_node.children[i])
     
+    def append_node(self, _node):
+        self.all_node.append(_node)
+
     def shuffle_puzzle(self, _node):
         numpy.random.shuffle(_node.puzzle)
         _node.set_puzzle(_node.puzzle)

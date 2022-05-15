@@ -58,7 +58,7 @@ class Frame:
                                                                        relative_rect = pygame.Rect((972,650), (400, 50)))
         self.label_subtitle = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
                                                                    text = "Artificial Intelligence - 8 Puzzle Final Project",
-                                                                   relative_rect = pygame.Rect((10,450), (400, 450)))
+                                                                   relative_rect = pygame.Rect((10,450), (500, 450)))
 
     def ui_event(self, _event):
         if _event.type == pygame_gui.UI_BUTTON_PRESSED:

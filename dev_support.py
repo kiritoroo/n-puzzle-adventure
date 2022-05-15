@@ -140,7 +140,7 @@ class DEV:
 
         rect_long_10 = pygame.Rect((350, 300), (500, 50))
         self.label_long_10 = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
-                                                        text = '10. _______________________________________',
+                                                        text = '10. ______________________________________',
                                                         relative_rect = rect_long_10,
                                                         object_id = "#label_dev_2")
     def draw(self, _display_surface):
