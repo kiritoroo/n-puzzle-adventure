@@ -57,3 +57,4 @@ class Block():
     def set_image(self, _image):
         self.image = _image
         self.init()
+        #fsfsfs
