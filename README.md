@@ -22,7 +22,7 @@
 </p>
 
 ## Features
-- 8 Puzzle Game 🎮
+- 8 Puzzle game 🎮
 - Algorithm Simulator 🔧
 - Compare Algorithm 🍉
 
