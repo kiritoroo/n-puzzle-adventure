@@ -10,11 +10,12 @@ import block
 pygame.init()
 clock = pygame.time.Clock()
 class Node:
-    def __init__(self, _screen, _puzzle, _level, _size, _pos, _handler):
+    def __init__(self, _screen, _puzzle, _level, _size, _ratio, _pos, _handler):
         self.screen = _screen
         self.puzzle = _puzzle
         self.level = _level
         self.size = _size
+        self.ratio = int(_ratio)
         self.pos = pygame.math.Vector2(_pos)
         self.handler = _handler
         self.images = None
@@ -40,28 +41,28 @@ class Node:
 
         self.default_size = self.size
 
-        self.surf = pygame.Surface((self.size/3 + 10, self.size/3 + 10))
+        self.surf = pygame.Surface((self.size/self.ratio + 10, self.size/self.ratio + 10))
         self.surf.fill(colors.BLUE_CLOUD)
         self.rect = self.surf.get_rect(topleft = (self.pos.x - 5, self.pos.y - 5))
         self.create_puzzle()
         
     def draw(self):
         ### Draw block
-        for i in range(9):
+        for i in range(numpy.power(self.ratio, 2)):
             self.blocks[i].draw()
         
         ### Draw caro line
-        for i in range(1,3):
+        for i in range(1, self.ratio):
             # Vertical
             pygame.draw.line(self.screen,
                             colors.BLACK,
-                            (i*self.size/9 + self.pos.x, self.pos.y),
-                            (i*self.size/9 + self.pos.x, self.pos.y + self.size/3 - 2))
+                            (i*self.size/numpy.power(self.ratio, 2) + self.pos.x, self.pos.y),
+                            (i*self.size/numpy.power(self.ratio, 2) + self.pos.x, self.pos.y + self.size/self.ratio - 2))
             # Horizontal
             pygame.draw.line(self.screen,
                             colors.BLACK,
-                            (self.pos.x, i*self.size/9 + self.pos.y),
-                            (self.pos.x + self.size/3 - 2, i*self.size/9 + self.pos.y))
+                            (self.pos.x, i*self.size/numpy.power(self.ratio, 2) + self.pos.y),
+                            (self.pos.x + self.size/self.ratio - 2, i*self.size/numpy.power(self.ratio, 2) + self.pos.y))
 
     def update(self):
         pass
@@ -71,8 +72,8 @@ class Node:
         self.g_cost = self.level
         self.f_cost = self.h_cost + self.g_cost
 
-    def set_image(self, _path):
-        self.images = image_service.split_image(_path)
+    def set_image(self, _path, _ratio):
+        self.images = image_service.split_image(_path, _ratio)
         self.create_puzzle()
 
     def set_puzzle(self, _puzzle):
@@ -86,23 +87,23 @@ class Node:
             offset_y = self.parent.surf.get_height() + 20
             offset_x = self.pos.x - self.parent.pos.x
             self.pos = pygame.math.Vector2(self.parent.pos.x + offset_x, self.parent.pos.y + offset_y)
-        self.surf = pygame.Surface((self.size/3 + 10, self.size/3 + 10))
+        self.surf = pygame.Surface((self.size/self.ratio + 10, self.size/self.ratio + 10))
         self.rect = self.surf.get_rect(topleft = (self.pos.x - 5, self.pos.y - 5))
 
-        for i in range(9):
+        for i in range(numpy.power(self.ratio, 2)):
             if self.images != None:
                 self.blocks.append(block.Block(self.screen,
-                                            self.size/9,
-                                            (i%3*self.size/9 + self.pos.x,
-                                             i//3*self.size/9 + self.pos.y),
+                                            self.size/numpy.power(self.ratio, 2),
+                                            (i%self.ratio*self.size/numpy.power(self.ratio, 2) + self.pos.x,
+                                             i//self.ratio*self.size/numpy.power(self.ratio, 2) + self.pos.y),
                                             self.puzzle[i],
                                             colors.BLUE_CLOUD,
                                             self.images[self.puzzle[i]]))
             else:
                 self.blocks.append(block.Block(self.screen,
-                                            self.size/9,
-                                            (i%3*self.size/9 + self.pos.x,
-                                             i//3*self.size/9 + self.pos.y),
+                                            self.size/numpy.power(self.ratio, 2),
+                                            (i%self.ratio*self.size/numpy.power(self.ratio, 2) + self.pos.x,
+                                             i//self.ratio*self.size/numpy.power(self.ratio, 2) + self.pos.y),
                                             self.puzzle[i],
                                             colors.BLUE_CLOUD,
                                             None))
@@ -146,11 +147,11 @@ class Node:
             return
 
         n = self.block_null_index
-        if n - 3 < 0:
+        if n - self.ratio < 0:
             return
 
         self.is_move_up = True
-        block_up = self.blocks[n-3]
+        block_up = self.blocks[n-self.ratio]
         block_null = self.blocks[n]
         y_last_up = block_null.pos.y
         y_last_null = block_up.pos.y
@@ -184,10 +185,10 @@ class Node:
         self.is_move_up = False
         
         # Logic
-        next_puzzle = numpy.zeros(9, dtype = int)
+        next_puzzle = numpy.zeros(numpy.power(self.ratio, 2), dtype = int)
         self.copy_puzzle(next_puzzle, self.puzzle)
-        temp = next_puzzle[n-3]
-        next_puzzle[n-3] = next_puzzle[n]
+        temp = next_puzzle[n-self.ratio]
+        next_puzzle[n-self.ratio] = next_puzzle[n]
         next_puzzle[n] = temp
         self.set_puzzle(next_puzzle)
         
@@ -197,7 +198,7 @@ class Node:
             return
 
         n = self.block_null_index
-        if n%3 >= 3-1:
+        if n%self.ratio >= self.ratio-1:
             return
 
         self.is_move_right = True
@@ -235,7 +236,7 @@ class Node:
         self.is_move_right = False
         
         # Logic
-        next_puzzle = numpy.zeros(9, dtype = int)
+        next_puzzle = numpy.zeros(numpy.power(self.ratio, 2), dtype = int)
         self.copy_puzzle(next_puzzle, self.puzzle)
         temp = next_puzzle[n+1]
         next_puzzle[n+1] = next_puzzle[n]
@@ -248,11 +249,11 @@ class Node:
             return
     
         n = self.block_null_index
-        if n + 3 >= 9:
+        if n + self.ratio >= numpy.power(self.ratio, 2):
             return
 
         self.is_move_down = True
-        block_down = self.blocks[n+3]
+        block_down = self.blocks[n+self.ratio]
         block_null = self.blocks[n]
         y_last_down = block_null.pos.y
         y_last_null = block_down.pos.y
@@ -286,10 +287,10 @@ class Node:
         self.is_move_down = False
 
         # Logic
-        next_puzzle = numpy.zeros(9, dtype = int)
+        next_puzzle = numpy.zeros(numpy.power(self.ratio, 2), dtype = int)
         self.copy_puzzle(next_puzzle, self.puzzle)
-        temp = next_puzzle[n+3]
-        next_puzzle[n+3] = next_puzzle[n]
+        temp = next_puzzle[n+self.ratio]
+        next_puzzle[n+self.ratio] = next_puzzle[n]
         next_puzzle[n] = temp
         self.set_puzzle(next_puzzle)
 
@@ -299,7 +300,7 @@ class Node:
             return
         
         n = self.block_null_index
-        if n%3 <= 0:
+        if n%self.ratio <= 0:
             return
 
         self.is_move_left = True
@@ -337,7 +338,7 @@ class Node:
         self.is_move_left = False
 
         # Logic 
-        next_puzzle = numpy.zeros(9, dtype = int)
+        next_puzzle = numpy.zeros(numpy.power(self.ratio, 2), dtype = int)
         self.copy_puzzle(next_puzzle, self.puzzle)
         temp = next_puzzle[n-1]
         next_puzzle[n-1] = next_puzzle[n]

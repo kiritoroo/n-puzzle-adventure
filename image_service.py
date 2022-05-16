@@ -1,7 +1,7 @@
 import pygame
 import colors
 
-def split_image(_path):
+def split_image(_path, _ratio):
     if _path == None:
         return None
         
@@ -12,10 +12,10 @@ def split_image(_path):
     
     x = 0
     y = 0
-    for i in range(3):
-        for j in range(3):
-            image_list.append(image.subsurface((x, y, image.get_height() / 3, image.get_width() / 3)))
-            x += image.get_width() / 3
+    for i in range(_ratio):
+        for j in range(_ratio):
+            image_list.append(image.subsurface((x, y, image.get_height() / _ratio, image.get_width() / _ratio)))
+            x += image.get_width() / _ratio
         x = 0
-        y += image.get_height() / 3
+        y += image.get_height() / _ratio
     return image_list

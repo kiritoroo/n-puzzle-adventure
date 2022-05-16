@@ -20,14 +20,17 @@ class Frame:
         self.is_play = False
         self.is_show_dev = False
         self.final_image = None
-        self.handlerNode = handler_node.HandlerNode(self.screen, self)
-        self.dev_tools = dev_support.DEV(self)
-        self.final_image_puzzle = node.Node(self.screen, self.handlerNode.goal_puzzle, 0, 400, (settings.SCREEN_WIDTH-245, 190), self.handlerNode)
+        self.ratio = (3,4,5)
+        self.current_ratio = self.ratio[0]
+
+        self.handlerNode = handler_node.HandlerNode(self.screen, self, self.current_ratio)
+        self.dev = dev_support.DEV(self)
+        self.final_image_puzzle = node.Node(self.screen, self.handlerNode.goal_puzzle[self.current_ratio-3], 0, 400, int(self.current_ratio), (settings.SCREEN_WIDTH-245, 190), self.handlerNode)
         self.handlerNode.append_node(self.final_image_puzzle)
 
     def ui_elements(self):
         #Button
-        rect_Solve = pygame.Rect((100, 200), (150, 60))
+        rect_Solve = pygame.Rect((100, 450), (150, 60))
         self.button_Solve = pygame_gui.elements.UIButton(relative_rect = rect_Solve,
                                                         text = "Solve",
                                                         manager = self.ui_manager)
@@ -61,19 +64,19 @@ class Frame:
 
         self.label_up = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
                                                             text = "Press ↑ to UP",
-                                                            relative_rect = pygame.Rect((70,270), (200, 180)),
+                                                            relative_rect = pygame.Rect((65,220), (200, 180)),
                                                             object_id = "#label_guide")
         self.label_down = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
                                                             text = "Press ↓ to DOWN",
-                                                            relative_rect = pygame.Rect((80,300), (200, 180)),
+                                                            relative_rect = pygame.Rect((75,250), (200, 180)),
                                                             object_id = "#label_guide")
         self.label_right = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
                                                             text = "Press → to RIGHT",
-                                                            relative_rect = pygame.Rect((85,330), (200, 180)),
+                                                            relative_rect = pygame.Rect((80,280), (200, 180)),
                                                             object_id = "#label_guide")
         self.label_left = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
                                                             text = "Press ← to LEFT",
-                                                            relative_rect = pygame.Rect((80,360), (200, 180)),
+                                                            relative_rect = pygame.Rect((75,310), (200, 180)),
                                                             object_id = "#label_guide")
         self.label_time = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
                                                             text = "00:00:00",
@@ -84,24 +87,30 @@ class Frame:
         self.picture_box1 = None
 
         # Drop down
-        rect_choose_picture = pygame.Rect((100,100), (150, 60))
-        picture_options = ['Only Number', 'Picture 1', 'Picture 2']
-        self.dropdown_choose_picture = pygame_gui.elements.UIDropDownMenu(options_list = picture_options,
-                                                                    starting_option = picture_options[0],
+        rect_choose_picture = pygame.Rect((100, 100), (150, 60))
+        self.picture_options = ['Only Number', 'Picture 1', 'Picture 2']
+        self.dropdown_choose_picture = pygame_gui.elements.UIDropDownMenu(options_list = self.picture_options,
+                                                                    starting_option = self.picture_options[0],
                                                                     relative_rect = rect_choose_picture,
+                                                                    manager = self.ui_manager)
+        rect_choose_level = pygame.Rect((100, 180), (150, 60))
+        self.level_options = ['Easy', 'Medium', 'Hard', 'Legend']
+        self.dropdown_choose_level = pygame_gui.elements.UIDropDownMenu(options_list = self.level_options,
+                                                                    starting_option = self.level_options[0],
+                                                                    relative_rect = rect_choose_level,
                                                                     manager = self.ui_manager)
                                                                     
     def render(self, _display_surface):
         self.handlerNode.draw()
         self.ui_manager.draw_ui(_display_surface)
         if self.is_show_dev:
-            self.dev_tools.draw(_display_surface)
+            self.dev.draw(_display_surface)
 
     def update(self, _delta_time):
         if self.is_play:
             counter_time = int(round(datetime.datetime.now().timestamp())) - int(round(self.start_time.timestamp()))
             self.label_time.set_text(str(time.strftime('%H:%M:%S', time.gmtime(counter_time))))
-            if self.handlerNode.root.is_same_puzzle(self.handlerNode.goal_puzzle):
+            if self.handlerNode.root.is_same_puzzle(self.handlerNode.goal_puzzle[self.current_ratio-3]):
                 # Dialog message
                 dialog_msg = '<b>You Win<br><br>Total time: '+str(self.label_time.text)+'</b><br>'
                 rect_win = pygame.Rect((settings.SCREEN_WIDTH/2 - (300/2), settings.SCREEN_HEIGHT/2 - (150/2)), (300, 150))
@@ -116,7 +125,8 @@ class Frame:
         self.handlerNode.update()
         self.ui_manager.update(_delta_time)
         if self.is_show_dev:
-            self.dev_tools.update(_delta_time)
+            self.development()
+            self.dev.update(_delta_time)
 
     def ui_event(self, _event):
         if _event.type == pygame.KEYDOWN:
@@ -136,6 +146,7 @@ class Frame:
                 self.button_Play.visible = False
                 self.button_Shuffle.visible = False
                 self.dropdown_choose_picture.disable()
+                self.dropdown_choose_level.disable()
                 self.start_time = datetime.datetime.now()
 
         if _event.type == pygame_gui.UI_DROP_DOWN_MENU_CHANGED and not self.is_play:
@@ -172,13 +183,15 @@ class Frame:
             self.final_image = None
             if self.picture_box1 != None:
                 self.picture_box1.kill()
-            self.handlerNode.set_image(None)
+            self.handlerNode.set_image(None, 0)
         else:
             self.final_image = pygame.image.load(_path)
             rect_picture = pygame.Rect((settings.SCREEN_WIDTH-260, 180), (150, 150))
             self.picture_box1 = pygame_gui.elements.UIImage(relative_rect = rect_picture, 
                                                             image_surface = self.final_image,
                                                             manager = self.ui_manager)
-            self.handlerNode.set_image(_path)
+            self.handlerNode.set_image(_path, self.current_ratio)
 
+    def development(self):
+        self.dev.label_short_1.set_text('Mode: '+self.level_options[self.current_ratio-3])
 
