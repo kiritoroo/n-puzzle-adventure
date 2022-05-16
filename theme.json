@@ -194,6 +194,20 @@
             "italic": "0"
         }
     },
+    "#label_dev_3":
+    {
+        "colours":
+        {
+            "normal_text": "0x347AFA"
+        },
+        "font":
+        {
+            "name": "fira_code",
+            "size": "15",
+            "bold": "0",
+            "italic": "1"
+        }
+    },
     "panel":
     {
         "colours":

@@ -25,7 +25,7 @@ class Game:
             # Handler Event
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
+                    pygame.quit()   
                     sys.exit()
                 self.handlerFrame.current_frame.ui_event(event)
             
