@@ -55,7 +55,7 @@ class Frame:
         # Label
         rect_guide = pygame.Rect((20, 0), (300, 50))
         self.label_guide = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
-                                                            text = 'F2 - Open/Close Development Tools',
+                                                            text = 'F2 - Open/Close Development',
                                                             relative_rect = rect_guide,
                                                             object_id = "#label_dev_1")
 
@@ -90,6 +90,7 @@ class Frame:
                                                                     starting_option = picture_options[0],
                                                                     relative_rect = rect_choose_picture,
                                                                     manager = self.ui_manager)
+                                                                    
     def render(self, _display_surface):
         self.handlerNode.draw()
         self.ui_manager.draw_ui(_display_surface)
