@@ -1,4 +1,5 @@
 from winreg import HKEY_CLASSES_ROOT
+from xml.sax import handler
 import pygame
 import sys, time
 import numpy
@@ -34,6 +35,7 @@ class Node:
         self.children = []
         self.parent = None
 
+        self.percent_right = self.check_percent_right()
         self.h_cost_block = []
         self.h_cost = 0
         self.g_cost = 0
@@ -42,11 +44,13 @@ class Node:
         self.default_size = self.size
 
         self.surf = pygame.Surface((self.size/self.ratio + 10, self.size/self.ratio + 10))
-        self.surf.fill(colors.BLUE_CLOUD)
+        self.surf.fill(colors.GRAY_LIGHT)
         self.rect = self.surf.get_rect(topleft = (self.pos.x - 5, self.pos.y - 5))
         self.create_puzzle()
         
     def draw(self):
+        self.surf.fill(colors.GRAY_LIGHT)
+        self.screen.blit(self.surf, self.rect)
         ### Draw block
         for i in range(numpy.power(self.ratio, 2)):
             self.blocks[i].draw()
@@ -55,12 +59,12 @@ class Node:
         for i in range(1, self.ratio):
             # Vertical
             pygame.draw.line(self.screen,
-                            colors.BLACK,
+                            colors.GRAY_LIGHT,
                             (i*self.size/numpy.power(self.ratio, 2) + self.pos.x, self.pos.y),
                             (i*self.size/numpy.power(self.ratio, 2) + self.pos.x, self.pos.y + self.size/self.ratio - 2))
             # Horizontal
             pygame.draw.line(self.screen,
-                            colors.BLACK,
+                            colors.GRAY_LIGHT,
                             (self.pos.x, i*self.size/numpy.power(self.ratio, 2) + self.pos.y),
                             (self.pos.x + self.size/self.ratio - 2, i*self.size/numpy.power(self.ratio, 2) + self.pos.y))
 
@@ -71,6 +75,8 @@ class Node:
         self.h_cost_block, self.h_cost = _cost
         self.g_cost = self.level
         self.f_cost = self.h_cost + self.g_cost
+    def set_size(self, _size):
+        self.size = _size
 
     def set_image(self, _path, _ratio):
         self.images = image_service.split_image(_path, _ratio)
@@ -79,9 +85,22 @@ class Node:
     def set_puzzle(self, _puzzle):
         self.puzzle = _puzzle
         self.create_puzzle()
+    
+    def set_puzzle_2(self, _puzzle):
+        self.puzzle = _puzzle
+
+    def set_ratio(self, _ratio):
+        self.ratio = _ratio
 
     def create_puzzle(self):
         self.blocks = []
+
+        if self.ratio == 3:
+            self.size = self.default_size
+        elif self.ratio == 4:
+            self.size = self.default_size + self.default_size/100*33
+        elif self.ratio == 5:
+            self.size = self.default_size + self.default_size/100*66
 
         if self.parent != None:
             offset_y = self.parent.surf.get_height() + 20
@@ -109,6 +128,7 @@ class Node:
                                             None))
             if self.puzzle[i] == 0:
                 self.block_null_index = i
+        self.percent_right = self.check_percent_right()
     
     def copy_puzzle(self, a, b):
         for i in range(len(b)):
@@ -125,6 +145,14 @@ class Node:
             if self.puzzle[i] != _p[i]:
                 return False
         return True
+
+    def check_percent_right(self):
+        count = 0
+        for i in range(len(self.puzzle)):
+            if self.puzzle[i] == self.handler.goal_puzzle[self.ratio-3][i]:
+                count += 1
+        percent = (count*100)/numpy.power(self.ratio, 2)
+        return percent
 
     def child_up(self):
         pass

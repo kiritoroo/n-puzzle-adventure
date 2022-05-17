@@ -1,11 +1,13 @@
 import pygame
 import pygame_gui
+import numpy
 import datetime
 import settings
 import time
 import node
 import handler_node
 import dev_support
+import getpass
 
 pygame.init()
 class Frame:
@@ -17,9 +19,11 @@ class Frame:
         self.ui_elements()
 
     def init(self):
+        self.step = 0
         self.is_play = False
         self.is_show_dev = False
         self.final_image = None
+        self.current_image_path = None
         self.ratio = (3,4,5)
         self.current_ratio = self.ratio[0]
 
@@ -43,12 +47,16 @@ class Frame:
                                                         text = "Back",
                                                         manager = self.ui_manager,
                                                         object_id = "#button_back" ) 
-        rect_Play = pygame.Rect((580, 500), (150, 70))
+        rect_Play = pygame.Rect((575, 500), (150, 70))
         self.button_Play = pygame_gui.elements.UIButton(relative_rect = rect_Play,
                                                         text = "Play",
                                                         manager = self.ui_manager,
                                                         object_id = "#button_play" ) 
-       
+        rect_add_picture = pygame.Rect((255, 100), (60, 60))
+        self.button_add_picture = pygame_gui.elements.UIButton(relative_rect = rect_add_picture,
+                                                        text = "+",
+                                                        manager = self.ui_manager)
+
         # Panel
         rect_Pane1 = pygame.Rect((30,80), (300, 450))
         self.panel_1 = pygame_gui.elements.ui_panel.UIPanel(relative_rect = rect_Pane1,
@@ -82,6 +90,16 @@ class Frame:
                                                             text = "00:00:00",
                                                             relative_rect = pygame.Rect((1000,270), (200, 180)),
                                                             object_id = "#label_time")
+        self.label_step = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
+                                                            text = "Step: " + str(self.step),
+                                                            relative_rect = pygame.Rect((1000,300), (200, 180)),
+                                                            object_id = "#label_time")
+        self.label_percent = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
+                                                            text = str(round(self.handlerNode.root.percent_right))+' %',
+                                                            relative_rect = pygame.Rect((1000,350), (200, 180)),
+                                                            visible = False,
+                                                            object_id = "#label_percent")
+                                   
                                    
         # Picture
         self.picture_box1 = None
@@ -110,16 +128,17 @@ class Frame:
         if self.is_play:
             counter_time = int(round(datetime.datetime.now().timestamp())) - int(round(self.start_time.timestamp()))
             self.label_time.set_text(str(time.strftime('%H:%M:%S', time.gmtime(counter_time))))
+            self.label_step.set_text('Step: '+str(self.step))
+            self.label_percent.set_text(str(round(self.handlerNode.root.percent_right))+' %')
             if self.handlerNode.root.is_same_puzzle(self.handlerNode.goal_puzzle[self.current_ratio-3]):
+                self.is_play = False
                 # Dialog message
                 dialog_msg = '<b>You Win<br><br>Total time: '+str(self.label_time.text)+'</b><br>'
                 rect_win = pygame.Rect((settings.SCREEN_WIDTH/2 - (300/2), settings.SCREEN_HEIGHT/2 - (150/2)), (300, 150))
-                dialog_win = pygame_gui.windows.ui_confirmation_dialog.UIConfirmationDialog(rect = rect_win,
+                self.dialog_win = pygame_gui.windows.ui_confirmation_dialog.UIConfirmationDialog(rect = rect_win,
                                                                                         action_long_desc = dialog_msg,
                                                                                         window_title ='Congratulations',
                                                                                         manager = self.ui_manager)
-                self.reset()
-                self.is_play = False
 
         self.get_input()
         self.handlerNode.update()
@@ -135,6 +154,8 @@ class Frame:
                     self.is_show_dev = False
                 else:
                     self.is_show_dev = True
+            if _event.key == pygame.K_UP or pygame.K_RIGHT or pygame.K_DOWN or pygame.K_LEFT:
+                self.step += 1
 
         if _event.type == pygame_gui.UI_BUTTON_PRESSED:
             if _event.ui_element == self.button_Back:
@@ -147,14 +168,44 @@ class Frame:
                 self.button_Shuffle.visible = False
                 self.dropdown_choose_picture.disable()
                 self.dropdown_choose_level.disable()
+                self.button_add_picture.disable()
+                self.label_percent.visible = True
                 self.start_time = datetime.datetime.now()
+            if _event.ui_element == self.button_add_picture and not self.is_play:
+                rect_dialog = pygame.Rect((settings.SCREEN_WIDTH/2 - (600/2), settings.SCREEN_HEIGHT/2 - (250/2)), (600, 250))
+                init_path = 'C:/Users/{}/Downloads'
+                self.file_dialog = pygame_gui.windows.ui_file_dialog.UIFileDialog(rect = rect_dialog,
+                                                                                window_title = 'Choose you Picture',
+                                                                                initial_file_path = init_path.format(getpass.getuser()),
+                                                                                manager = self.ui_manager)
 
         if _event.type == pygame_gui.UI_DROP_DOWN_MENU_CHANGED and not self.is_play:
             if _event.ui_element == self.dropdown_choose_picture:
                 if _event.text == 'Only Number':
-                    self.set_final_image(None)
+                    self.current_image_path = None
                 elif _event.text == 'Picture 1':
-                    self.set_final_image('resources/img1.jpg')
+                    self.current_image_path = 'resources/img1.jpg'
+                elif _event.text == 'Picture 2':
+                    self.current_image_path = 'resources/img2.jpg'
+                self.set_final_image(self.current_image_path)
+            if _event.ui_element == self.dropdown_choose_level:
+                if _event.text == 'Easy':
+                    self.reset_ratio(self.ratio[0])
+                elif _event.text == 'Medium':
+                    self.reset_ratio(self.ratio[1])
+                elif _event.text == 'Hard':
+                    self.reset_ratio(self.ratio[2])
+                else:
+                    pass
+
+        if _event.type == pygame_gui.UI_CONFIRMATION_DIALOG_CONFIRMED:
+            if _event.ui_element == self.dialog_win:
+                self.reset()
+        
+        if _event.type == pygame_gui.UI_FILE_DIALOG_PATH_PICKED:
+            if _event.ui_element == self.file_dialog:
+                self.current_image_path = _event.text
+                self.set_final_image(self.current_image_path)
 
         self.ui_manager.process_events(_event)
 
@@ -171,19 +222,35 @@ class Frame:
             self.handlerNode.root.move_down()
         if keys[pygame.K_LEFT]:
             self.handlerNode.root.move_left()
+
     def reset(self):
         self.handlerNode.shuffle_puzzle(self.handlerNode.root)
-        self.label_time.set_text('00:00:00')
+        self.label_time.set_text('00:00:00')    
+        self.step = 0
+        self.label_percent.visible = False
         self.button_Play.visible = True
         self.button_Shuffle.visible = True
         self.dropdown_choose_picture.enable()
-
+        self.dropdown_choose_level.enable()
+        self.button_add_picture.enable()
+    
+    def reset_ratio(self, _ratio):
+        self.current_ratio = _ratio
+        self.handlerNode.set_ratio(_ratio)
+        numpy.random.shuffle(self.handlerNode.start_puzzle[self.current_ratio-3])
+        self.handlerNode.root.set_puzzle_2(self.handlerNode.start_puzzle[self.current_ratio-3])
+        self.final_image_puzzle.set_puzzle_2(self.handlerNode.goal_puzzle[self.current_ratio-3])
+        self.final_image_puzzle.create_puzzle()
+        if self.final_image != None:
+            self.set_final_image(self.current_image_path)
+        self.handlerNode.root.create_puzzle()
+    
     def set_final_image(self, _path):
+        if self.picture_box1 != None:
+            self.picture_box1.kill()
         if _path == None:
             self.final_image = None
-            if self.picture_box1 != None:
-                self.picture_box1.kill()
-            self.handlerNode.set_image(None, 0)
+            self.handlerNode.set_image(None, self.current_ratio)
         else:
             self.final_image = pygame.image.load(_path)
             rect_picture = pygame.Rect((settings.SCREEN_WIDTH-260, 180), (150, 150))
@@ -194,4 +261,7 @@ class Frame:
 
     def development(self):
         self.dev.label_short_1.set_text('Mode: '+self.level_options[self.current_ratio-3])
+        self.dev.label_short_2.set_text('Node area: '+str(round(self.handlerNode.root.size)))
+        self.dev.label_short_3.set_text('Puzzle size: '+str(round(self.handlerNode.root.blocks[0].size)))
+        self.dev.label_short_4.set_text('Percent Complete: '+str(round(self.handlerNode.root.percent_right)))
 

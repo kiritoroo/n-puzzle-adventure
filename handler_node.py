@@ -50,6 +50,11 @@ class HandlerNode:
     def set_image(self, _path, _ratio):
         self.root.set_image(_path, _ratio)
 
+    def set_ratio(self, _ratio):
+        self.ratio = _ratio
+        for i in range(len(self.all_node)):
+            self.all_node[i].set_ratio(_ratio)
+
     def get_all_node(self, _node):
         self.all_node.append(_node)
         for i in range(len(_node.children)):
