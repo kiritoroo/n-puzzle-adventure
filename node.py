@@ -20,6 +20,8 @@ class Node:
         self.pos = pygame.math.Vector2(_pos)
         self.handler = _handler
         self.images = None
+        self.path = None
+        self.zoom = 1
         self.init()
 
     def init(self):
@@ -30,6 +32,12 @@ class Node:
         self.is_move_right = False
         self.is_move_down = False
         self.is_move_left = False
+
+        self.is_info1_open = False
+        self.is_info2_open = False 
+
+        self.mouse_rel = (0,0)
+        self.total_width_child = 0
 
         self.blocks = []
         self.children = []
@@ -47,10 +55,16 @@ class Node:
         self.surf.fill(colors.GRAY_LIGHT)
         self.rect = self.surf.get_rect(topleft = (self.pos.x - 5, self.pos.y - 5))
         self.create_puzzle()
-        
+        self.interactive_init()
+
     def draw(self):
-        self.surf.fill(colors.GRAY_LIGHT)
+        ### Draw background
+        if self.is_choose:
+            self.surf.fill(colors.GREEN_LIME)
+        else:
+            self.surf.fill(colors.GRAY_LIGHT)
         self.screen.blit(self.surf, self.rect)
+
         ### Draw block
         for i in range(numpy.power(self.ratio, 2)):
             self.blocks[i].draw()
@@ -68,8 +82,19 @@ class Node:
                             (self.pos.x, i*self.size/numpy.power(self.ratio, 2) + self.pos.y),
                             (self.pos.x + self.size/self.ratio - 2, i*self.size/numpy.power(self.ratio, 2) + self.pos.y))
 
+             # Draw link to children
+            for i in range(len(self.children)):
+                pygame.draw.line(self.screen,
+                                colors.RED_LIGHT,
+                                (self.pos[0] + self.size/6,self.pos[1] + self.size/6),
+                                (self.children[i].pos[0] + self.children[i].size/6, self.children[i].pos[1] + self.children[i].size/6),
+                                3)            
+        
+        self.interactive_draw()
+
     def update(self):
-        pass
+        self.move_node()
+        self.interactive_update()
 
     def set_cost(self, _cost):
         self.h_cost_block, self.h_cost = _cost
@@ -77,10 +102,36 @@ class Node:
         self.f_cost = self.h_cost + self.g_cost
     def set_size(self, _size):
         self.size = _size
+        self.create_puzzle()
+
+    def set_zoom(self, _zoom):
+        self.zoom = _zoom
+        self.create_puzzle()
+        self.reset_pos_children()
 
     def set_image(self, _path, _ratio):
         self.images = image_service.split_image(_path, _ratio)
+        self.path = _path
         self.create_puzzle()
+        self.interactive_init()
+
+    def set_color(self, _color):
+        for i in range(len(self.blocks)):
+            self.blocks[i].set_color(_color)
+    
+    def set_parent(self, _parent):
+        self.parent = _parent
+
+    def set_children(self, _children):
+        self.children = _children
+
+    def set_default_size(self, _size):
+        self.default_size = _size
+    
+    def set_pos(self, _pos):
+        self.pos = pygame.math.Vector2(_pos)
+        self.create_puzzle()
+        self.interactive_init()
 
     def set_puzzle(self, _puzzle):
         self.puzzle = _puzzle
@@ -88,9 +139,134 @@ class Node:
     
     def set_puzzle_2(self, _puzzle):
         self.puzzle = _puzzle
+    
+    def set_is_choose(self, _value):
+        self.is_choose = _value
 
     def set_ratio(self, _ratio):
         self.ratio = _ratio
+
+    # HARDCODE
+    def check_collider_mouse(self, _key):
+        if self.handler.frame.__module__ == 'frame_game':
+            return
+
+        mouse_pos = pygame.mouse.get_pos()
+        if _key == 1:
+            if self.rect.collidepoint(mouse_pos):
+                if self.is_choose == False:
+                    self.is_choose = True
+                    return True
+                elif self.is_choose == True:
+                    return True
+
+        elif _key == 2:
+            if self.rect.collidepoint(mouse_pos):
+                if self.is_move == True:
+                    self.is_move = False
+                    self.is_choose = True
+                    return True
+                elif self.is_move == False:
+                    self.is_move = True
+                    self.is_choose = True
+                    return True
+        elif _key == 3:
+            self.is_move = False
+            self.is_choose = False
+            return False
+
+        if self.info_button_rect.collidepoint(mouse_pos):
+            if self.is_info1_open:
+                self.is_info1_open = False
+            else:
+                self.is_info1_open = True
+        if self.info2_button_rect.collidepoint(mouse_pos):
+            if self.is_info2_open:
+                self.is_info2_open = False
+            else:
+                self.is_info2_open = True
+
+    def move_node(self):
+        if self.is_choose and self.is_move:
+            self.mouse_rel = pygame.mouse.get_rel()
+            mouse_pos = pygame.mouse.get_pos()
+            offset_x = self.surf.get_width()/2
+            offset_y = self.surf.get_height()/2
+            self.pos = pygame.math.Vector2(mouse_pos[0]-offset_x, mouse_pos[1]-offset_y)
+            self.create_puzzle()
+            self.interactive_init()
+            for i in range(len(self.children)):
+                self.move_all_child(self.children[i], pygame.math.Vector2(self.mouse_rel))
+
+    def move_all_child(self, _node, _offset):
+        new_pos = (_node.pos[0] + _offset[0],
+                   _node.pos[1] + _offset[1])
+        _node.set_pos(new_pos)
+        for i in range(len(_node.children)):
+            self.move_all_child(_node.children[i], _offset)
+     
+    def reset_pos_children(self):
+        offset = 30 * self.zoom
+        total_width = 0
+        for i in range(len(self.children)):
+            total_width += self.children[i].surf.get_width() + offset
+        start_pos_x = round(self.pos[0] - total_width/2 + self.surf.get_width()/2 + 5)
+        start_pos_y = self.pos.y + self.surf.get_width() + 40 * self.zoom
+        for i in range(len(self.children)):
+            self.children[i].set_pos((start_pos_x, start_pos_y))
+            start_pos_x += round(self.children[i].surf.get_width() + offset)
+    # End HARDCORE
+
+    # INTERACTIVE
+    def interactive_init(self):
+        if self.handler.frame.__module__ == 'frame_game':
+            return
+
+        # Button
+        self.info_button_surf = pygame.Surface(((self.size/self.ratio + 10)/8, (self.size/self.ratio + 10)/8))
+        self.info_button_rect = self.info_button_surf.get_rect(topleft = (self.pos.x + self.surf.get_width() + 2, self.pos.y + 10))
+        self.info_button_surf.fill(colors.GREEN_LIGHT)
+        self.info_button_surf.set_alpha(150)
+        self.text1_pos = (self.info_button_rect.left + self.info_button_surf.get_width() / 2,
+                        self.info_button_rect.top + self.info_button_surf.get_height() / 2)
+        self.text1_surf = settings.font.render('+', True, colors.GREEN_DARK)
+        self.text1_rect = self.text1_surf.get_rect(center = self.text1_pos)
+
+        self.info2_button_surf = pygame.Surface(((self.size/self.ratio + 10)/8, (self.size/self.ratio + 10)/8))
+        self.info2_button_rect = self.info2_button_surf.get_rect(topleft = (self.pos.x + self.surf.get_width() + 2, self.pos.y + self.info_button_surf.get_height() + 15))
+        self.info2_button_surf.fill(colors.GREEN_LIGHT)
+        self.info2_button_surf.set_alpha(150)
+        self.text2_pos = (self.info2_button_rect.left + self.info2_button_surf.get_width() / 2,
+                        self.info2_button_rect.top + self.info2_button_surf.get_height() / 2)
+        self.text2_surf = settings.font.render('-', True, colors.GREEN_DARK)
+        self.text2_rect = self.text1_surf.get_rect(center = self.text2_pos)
+
+        # Panel
+        self.panel_surf = pygame.Surface((self.size/4, self.size/4))
+        self.panel_pos = pygame.math.Vector2(self.rect.left + self.surf.get_width() / 2,
+                                        self.rect.top + self.surf.get_height() / 2)
+        self.panel_surf.set_alpha(150)
+        self.panel_surf.fill(colors.GREEN_LIGHT)
+        self.panel_rect = self.panel_surf.get_rect(center = self.panel_pos)
+
+    def interactive_draw(self):
+        if self.handler.frame.__module__ == 'frame_game':
+            return
+
+        self.screen.blit(self.info_button_surf, self.info_button_rect)
+        self.screen.blit(self.text1_surf, self.text1_rect)
+        self.screen.blit(self.info2_button_surf, self.info2_button_rect)
+        self.screen.blit(self.text2_surf, self.text2_rect)
+
+        if self.is_info1_open:
+            self.screen.blit(self.panel_surf, self.panel_rect)
+
+    def interactive_update(self):
+        if self.handler.frame.__module__ == 'frame_game':
+            return
+        pass
+
+    # End INTERACTOVE
 
     def create_puzzle(self):
         self.blocks = []
@@ -101,6 +277,8 @@ class Node:
             self.size = self.default_size + self.default_size/100*33
         elif self.ratio == 5:
             self.size = self.default_size + self.default_size/100*66
+
+        self.size = self.size * self.zoom
 
         if self.parent != None:
             offset_y = self.parent.surf.get_height() + 20
@@ -129,6 +307,7 @@ class Node:
             if self.puzzle[i] == 0:
                 self.block_null_index = i
         self.percent_right = self.check_percent_right()
+        self.interactive_init()
     
     def copy_puzzle(self, a, b):
         for i in range(len(b)):
@@ -155,19 +334,102 @@ class Node:
         return percent
 
     def child_up(self):
-        pass
+        n = self.block_null_index
+        if n - self.ratio >= 0:
+            child_puzzle = numpy.zeros(numpy.power(self.ratio, 2), dtype = int)
+            self.copy_puzzle(child_puzzle, self.puzzle)
+            temp = child_puzzle[n-self.ratio]
+            child_puzzle[n-self.ratio] = child_puzzle[n]
+            child_puzzle[n] = temp
+            child_node = Node(self.screen, 
+                        child_puzzle,
+                        self.level+1,
+                        self.size,
+                        self.ratio,
+                        (self.pos[0], self.pos[1]+self.surf.get_height()+40*self.zoom),
+                        self.handler)
+            child_node.set_default_size(self.default_size)
+            if self.is_child_contain(child_node):
+                return
+            child_node.set_image(self.path, self.ratio)
+            self.children.append(child_node)
+            child_node.set_parent(self)
+            self.reset_pos_children()
+
     def child_right(self):
-        pass
+        n = self.block_null_index
+        if n%self.ratio < self.ratio-1:
+            child_puzzle = numpy.zeros(numpy.power(self.ratio, 2), dtype = int)
+            self.copy_puzzle(child_puzzle, self.puzzle)
+            temp = child_puzzle[n+1]
+            child_puzzle[n+1] = child_puzzle[n]
+            child_puzzle[n] = temp
+            child_node = Node(self.screen, 
+                        child_puzzle,
+                        self.level+1,
+                        self.size,
+                        self.ratio,
+                        (self.pos[0], self.pos[1]+self.surf.get_height()+40*self.zoom),
+                        self.handler)
+            child_node.set_default_size(self.default_size)
+            if self.is_child_contain(child_node):
+                return
+            child_node.set_image(self.path, self.ratio)
+            self.children.append(child_node)
+            child_node.set_parent(self)
+            self.reset_pos_children()
+
     def child_down(self):
-        pass
+        n = self.block_null_index
+        if n + self.ratio < numpy.power(self.ratio, 2):
+            child_puzzle = numpy.zeros(numpy.power(self.ratio, 2), dtype = int)
+            self.copy_puzzle(child_puzzle, self.puzzle)
+            temp = child_puzzle[n+self.ratio]
+            child_puzzle[n+self.ratio] = child_puzzle[n]
+            child_puzzle[n] = temp
+            child_node = Node(self.screen, 
+                        child_puzzle,
+                        self.level+1,
+                        self.size,
+                        self.ratio,
+                        (self.pos[0], self.pos[1]+self.surf.get_height()+40*self.zoom),
+                        self.handler)
+            child_node.set_default_size(self.default_size)
+            if self.is_child_contain(child_node):
+                return
+            child_node.set_image(self.path, self.ratio)
+            self.children.append(child_node)
+            child_node.set_parent(self)
+            self.reset_pos_children()
+
     def child_left(self):
-        pass
+        n = self.block_null_index
+        if n%self.ratio > 0:
+            child_puzzle = numpy.zeros(numpy.power(self.ratio, 2), dtype = int)
+            self.copy_puzzle(child_puzzle, self.puzzle)
+            temp = child_puzzle[n-1]
+            child_puzzle[n-1] = child_puzzle[n]
+            child_puzzle[n] = temp
+            child_node = Node(self.screen, 
+                        child_puzzle,
+                        self.level+1,
+                        self.size,
+                        self.ratio,
+                        (self.pos[0], self.pos[1]+self.surf.get_height()+40*self.zoom),
+                        self.handler)
+            child_node.set_default_size(self.default_size)
+            if self.is_child_contain(child_node):
+                return
+            child_node.set_image(self.path, self.ratio)
+            self.children.append(child_node)
+            child_node.set_parent(self) 
+            self.reset_pos_children()
 
     def general_child(self):
         self.child_up()
-        self.child_right
+        self.child_right()
         self.child_down()
-        self.child_left
+        self.child_left()
     
     def move_up(self):
         # Animation

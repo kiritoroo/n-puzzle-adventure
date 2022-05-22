@@ -27,7 +27,7 @@ class Frame:
         self.ratio = (3,4,5)
         self.current_ratio = self.ratio[0]
 
-        self.handlerNode = handler_node.HandlerNode(self.screen, self, self.current_ratio)
+        self.handlerNode = handler_node.HandlerNode(self.screen, self, self.current_ratio, 1000)
         self.dev = dev_support.DEV(self)
         self.final_image_puzzle = node.Node(self.screen, self.handlerNode.goal_puzzle[self.current_ratio-3], 0, 400, int(self.current_ratio), (settings.SCREEN_WIDTH-245, 190), self.handlerNode)
         self.handlerNode.append_node(self.final_image_puzzle)
@@ -264,4 +264,5 @@ class Frame:
         self.dev.label_short_2.set_text('Node area: '+str(round(self.handlerNode.root.size)))
         self.dev.label_short_3.set_text('Puzzle size: '+str(round(self.handlerNode.root.blocks[0].size)))
         self.dev.label_short_4.set_text('Percent Complete: '+str(round(self.handlerNode.root.percent_right)))
+        self.dev.label_long_1.set_text('Frame: '+str(self.handlerNode.frame.__module__))
 

@@ -24,6 +24,18 @@ class DEV:
         self.panel_surf.fill(colors.GRAY_LIGHT)
         self.panel_rect = self.panel_surf.get_rect(topleft = self.pos)
 
+        #General
+        rect_general_1 = pygame.Rect((350, 350), (500, 50))
+        self.label_general_1 = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
+                                                        text = 'Mouse Pos: ' + str(pygame.mouse.get_pos()),
+                                                        relative_rect = rect_general_1,
+                                                        object_id = "#label_dev_2")
+        rect_general_1 = pygame.Rect((50, 350), (500, 50))
+        self.label_general_2 = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
+                                                        text = 'Mouse Rel: ' + str(pygame.mouse.get_rel()),
+                                                        relative_rect = rect_general_1,
+                                                        object_id = "#label_dev_2")
+
         # Short Label
         rect_short_1 = pygame.Rect((20, 30), (300, 50))
         self.label_short_1 = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
@@ -148,4 +160,6 @@ class DEV:
         self.ui_manager.draw_ui(_display_surface)
 
     def update(self, _delta_time):
+        self.label_general_1.set_text('Mouse Pos: ' + str(pygame.mouse.get_pos()))
+        self.label_general_2.set_text('Mouse Rel: ' + str(pygame.mouse.get_rel()))
         self.ui_manager.update(_delta_time)
