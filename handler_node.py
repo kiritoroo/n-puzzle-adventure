@@ -3,9 +3,10 @@ import node
 import settings
 import numpy
 import algorithm
+import colors
 
 pygame.init()
-
+clock = pygame.time.Clock()
 class HandlerNode:
     def __init__(self, _screen, _frame, _ratio, _size):
         self.screen = _screen
@@ -45,12 +46,20 @@ class HandlerNode:
         self.root = node.Node(self.screen, self.start_puzzle[self.ratio-3], 0, node_size, int(self.ratio), spawn_point, self)
         self.get_all_node(self.root)
 
+        if self.frame.__module__ == 'frame_simulator':
+            self.proplem_node = node.Node(self.screen, self.root.puzzle, 0, 300, self.ratio, (1130,530), self)
+
     def draw(self):
         for i in range(len(self.all_node)):
             self.all_node[i].draw()
 
     def update(self):
         for i in range(len(self.all_node)):
+            if self.algorithm.goal_found:
+                if self.all_node[i].children == [] and self.all_node[i].level < self.algorithm.goal_node.level:
+                    self.all_node[i].set_color(colors.RED_LIGHT)
+                if self.all_node[i].is_same_puzzle(self.goal_puzzle[self.ratio-3]):
+                    self.all_node[i].set_color(colors.GREEN_LIME)
             self.all_node[i].update()
 
     def set_image(self, _path, _ratio):
@@ -81,6 +90,42 @@ class HandlerNode:
             self.algorithm.a_star()
         self.solution_path = self.algorithm.solution_path()
         self.create_solution_node()
+
+    def create_solution_node(self):
+        self.solution_node = []
+        if self.solution_path != None:
+            start_pos_x = 350
+            for i in range(len(self.solution_path)):
+                _node = node.Node(self.screen,
+                                  self.solution_path[i],
+                                  0,
+                                  (200),
+                                  self.ratio,
+                                  (start_pos_x, 600),
+                                  self)
+                self.solution_node.append(_node)
+                start_pos_x += 100
+
+    def draw_solution(self):
+        for i in range(len(self.solution_node)):
+            self.solution_node[i].draw()
+            if i+1 < len(self.solution_node):
+                pygame.draw.line(self.screen, colors.GREEN_LIGHT, 
+                                 (self.solution_node[i].pos[0] + self.solution_node[i].surf.get_width()/2, self.solution_node[i].pos[1] + self.solution_node[i].surf.get_height()/2),
+                                 (self.solution_node[i+1].pos[0], self.solution_node[i+1].pos[1] + self.solution_node[i+1].surf.get_height()/2),
+                                 5)          
+            self.solution_node[i].update
+
+    def play_solution(self):
+        if self.solution_path == None:
+            return
+        for i in range(len(self.solution_path)):
+            self.proplem_node.set_puzzle(self.solution_path[i])   
+            
+            self.proplem_node.set_color("ORANGE")
+            self.proplem_node.draw()
+            pygame.display.update()
+            clock.tick(5)
     # End Algorithm
 
     # HARDCORE
@@ -93,19 +138,48 @@ class HandlerNode:
         self.get_max_level()
         self.algorithm.reset_goal_found()
 
-    def valid_puzzle(self, puzzle_string):
+    def valid_puzzle(self, _puzzle_string):
         valid = False
-        print(len(puzzle_string))
-        if len(puzzle_string) == 9:
-            ref = list(range(9))
+        print(len(_puzzle_string))
+        if len(_puzzle_string) == 9 or len(_puzzle_string) == 16 or len(_puzzle_string) == 25:
+            ref = list(range(int(numpy.math.pow(self.ratio,2))))
             valid = True
-            for i in puzzle_string:
+            for i in _puzzle_string:
                 if int(i) not in ref:
                     valid = False
                 else:
                     ref.remove(int(i))
         print(valid)
         return valid
+
+    def set_goal(self, _string):
+        puzzle_string = _string.split(" ")
+        if self.valid_puzzle(puzzle_string):
+            puzzle = []
+            for i in range(9):
+                puzzle.append(int(puzzle_string[i]))
+            self.goal_puzzle = puzzle
+            self.reset_handler()
+            self.solution_node = []
+            self.solution_path = None
+            return True
+        return False
+
+    def set_root(self, string):
+        puzzle_string = string.split(" ")
+        if self.valid_puzzle(puzzle_string):
+            puzzle = []
+            for i in range(9):
+                puzzle.append(int(puzzle_string[i]))
+            self.root.set_puzzle(puzzle)
+            self.reset_handler()
+            self.proplem_node.set_puzzle(puzzle)
+            self.proplem_node.set_puzzle(puzzle)
+            self.solution_node = []
+            self.solution_path = None
+            return True
+        return False
+
     def check_all_collider_mouse(self, _key):
         if _key == 3:
             for i in range(len(self.all_node)):

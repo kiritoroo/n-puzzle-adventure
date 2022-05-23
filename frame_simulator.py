@@ -79,13 +79,13 @@ class Frame:
                                                         object_id = "#button_play" )
 
         rect_ok1 = pygame.Rect((225, 540), (40, 35))
-        self.button_ok_1 = pygame_gui.elements.UIButton(relative_rect = rect_ok1,
+        self.button_set_start = pygame_gui.elements.UIButton(relative_rect = rect_ok1,
                                                         text = "OK",
                                                         manager = self.ui_manager,
                                                         object_id = "#button_ok")
 
         rect_ok2 = pygame.Rect((225, 580), (40, 35))
-        self.button_ok_2 = pygame_gui.elements.UIButton(relative_rect = rect_ok2,
+        self.button_set_goal = pygame_gui.elements.UIButton(relative_rect = rect_ok2,
                                                         text = "OK",
                                                         manager = self.ui_manager,
                                                         object_id = "#button_ok")
@@ -164,6 +164,13 @@ class Frame:
         self.ui_manager.draw_ui(_display_surface)
         if self.is_show_dev:
             self.dev.draw(_display_surface)
+        # Top layer
+    
+        if self.handlerNode.proplem_node.is_same_puzzle(self.handlerNode.goal_puzzle[self.current_ratio-3]):
+            self.handlerNode.proplem_node.set_color("GREEN")
+        else:
+            self.handlerNode.proplem_node.set_color("ORANGE")
+        self.handlerNode.proplem_node.draw()
 
     def update(self, _delta_time):
         if len(self.handlerNode.root.children) > 0:
@@ -215,6 +222,12 @@ class Frame:
                 self.frame_handler.set_current_frame('frame_menu')
             if _event.ui_element == self.button_solve:
                 self.handlerNode.solve()
+            if _event.ui_element == self.button_play_solution:
+                self.handlerNode.play_solution()
+            if _event.ui_element == self.button_set_start:
+                self.handlerNode.set_root(self.input_start_state.get_text())
+            if _event.ui_element == self.button_set_goal:
+                self.handlerNode.set_goal(self.input_goal_state.get_text())
             if self.handlerNode.node_choose != None:
                 if _event.ui_element == self.button_general:
                     self.handlerNode.node_choose.general_child()
@@ -305,8 +318,5 @@ class Frame:
             self.dev.label_short_3.set_text('Mouse rel: ' + str(self.handlerNode.node_choose.mouse_rel))
         self.dev.label_long_5.set_text('Max level: ' + str(self.handlerNode.max_level))
         self.dev.label_long_6.set_text('Node-level-arr-count: ' + str(len(self.handlerNode.all_node_level)))
-
-
-
 
 

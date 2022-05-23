@@ -50,6 +50,7 @@ class Node:
         self.f_cost = 0
 
         self.default_size = self.size
+        self.line_color = colors.RED_LIGHT
 
         self.surf = pygame.Surface((self.size/self.ratio + 10, self.size/self.ratio + 10))
         self.surf.fill(colors.GRAY_LIGHT)
@@ -82,14 +83,22 @@ class Node:
                             (self.pos.x, i*self.size/numpy.power(self.ratio, 2) + self.pos.y),
                             (self.pos.x + self.size/self.ratio - 2, i*self.size/numpy.power(self.ratio, 2) + self.pos.y))
 
-             # Draw link to children
-            for i in range(len(self.children)):
+        # Draw link to children
+        for i in range(len(self.children)):
+            pygame.draw.line(self.screen,
+                            colors.RED_LIGHT,
+                            (self.pos[0] + self.size/6,self.pos[1] + self.size/6),
+                            (self.children[i].pos[0] + self.children[i].size/6, self.children[i].pos[1] + self.children[i].size/6),
+                            3)  
+
+        # Draw link to parent
+        if self.parent != None:
+            if self.line_color == colors.GREEN_LIME:
                 pygame.draw.line(self.screen,
-                                colors.RED_LIGHT,
-                                (self.pos[0] + self.size/6,self.pos[1] + self.size/6),
-                                (self.children[i].pos[0] + self.children[i].size/6, self.children[i].pos[1] + self.children[i].size/6),
-                                3)            
-        
+                                 self.line_color,
+                                 (self.pos[0] + self.size/6,self.pos[1] + self.size/6),
+                                 (self.parent.pos[0] + self.parent.size/6, self.parent.pos[1] + self.parent.size/6),
+                                 3)  
         self.interactive_draw()
 
     def update(self):
@@ -100,6 +109,7 @@ class Node:
         self.h_cost_block, self.h_cost = _cost
         self.g_cost = self.level
         self.f_cost = self.h_cost + self.g_cost
+
     def set_size(self, _size):
         self.size = _size
         self.create_puzzle()
@@ -118,7 +128,10 @@ class Node:
     def set_color(self, _color):
         for i in range(len(self.blocks)):
             self.blocks[i].set_color(_color)
-    
+
+    def set_line_color(self, _color):
+        self.line_color = _color
+
     def set_parent(self, _parent):
         self.parent = _parent
 
