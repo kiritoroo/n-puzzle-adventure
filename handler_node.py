@@ -79,15 +79,20 @@ class HandlerNode:
         elif _str_algorithm == "A* (Manhattan)":
             self.algorithm = algorithm.InformedSearch()
             self.str_algorithm = "A* (Manhattan)"
+        elif _str_algorithm == "Hill Climb":
+            self.algorithm = algorithm.LocalSearch()
+            self.str_algorithm = 'Hill Climb'
         print(self.str_algorithm)
 
-    def solve(self):
+    def solve_all(self):
         self.reset_handler()
         self.algorithm.init_all(self.screen, self.root, self.goal_puzzle[self.ratio-3], self)
         if self.str_algorithm == 'BFS':
             self.algorithm.bfs()
-        elif self.str_algorithm == "A* (Manhattan)":
+        elif self.str_algorithm == 'A* (Manhattan)':
             self.algorithm.a_star()
+        elif self.str_algorithm == 'Hill Climb':
+            self.algorithm.hill_climb()
         self.solution_path = self.algorithm.solution_path()
         self.create_solution_node()
 

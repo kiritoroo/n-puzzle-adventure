@@ -128,7 +128,7 @@ class Frame:
         # Drop down
         rect_choose_algorithm = pygame.Rect((15,440), (250, 35))
         self.rect_list.append(rect_choose_algorithm)
-        algorithm_options = ['BFS', 'A* (Manhattan)', 'Algorithm 3']
+        algorithm_options = ['BFS', 'A* (Manhattan)', 'Hill Climb']
         self.dropdown_choose_algorithm = pygame_gui.elements.UIDropDownMenu(options_list = algorithm_options,
                                                                     starting_option = algorithm_options[0],
                                                                     relative_rect = rect_choose_algorithm,
@@ -221,7 +221,7 @@ class Frame:
             if _event.ui_element == self.button_back:
                 self.frame_handler.set_current_frame('frame_menu')
             if _event.ui_element == self.button_solve:
-                self.handlerNode.solve()
+                self.handlerNode.solve_all ()
             if _event.ui_element == self.button_play_solution:
                 self.handlerNode.play_solution()
             if _event.ui_element == self.button_set_start:
@@ -296,7 +296,7 @@ class Frame:
         self.current_ratio = _ratio
         self.handlerNode.set_ratio(_ratio)
         numpy.random.shuffle(self.handlerNode.start_puzzle[self.current_ratio-3])
-        self.handlerNode.root.set_puzzle_2(self.handlerNode.start_puzzle[self.current_ratio-3])
+        self.handlerNode.root.set_puzzle_2(self.handlerNode.start_puzzle[self.current_ratio-3]) 
         if self.final_image != None:
             self.set_final_image(self.current_image_path)
         self.handlerNode.root.create_puzzle()
@@ -312,10 +312,18 @@ class Frame:
             self.dev.label_long_3.set_text('Node choose: None')
             self.dev.label_long_4.set_text('Level choose: None')
             self.dev.label_short_3.set_text('Mouse rel: ' + str(self.mouse_rel))
+            self.dev.label_long_7.set_text('h-block: ' + 'None')
+            self.dev.label_long_8.set_text('h-cost: ' + 'None')
+            self.dev.label_long_9.set_text('g-cost: ' + 'None')
+            self.dev.label_long_10.set_text('% right: ' + 'None')
         else:
             self.dev.label_long_3.set_text('Node choose: ' + str(self.handlerNode.node_choose.puzzle))
             self.dev.label_long_4.set_text('Level choose: ' + str(self.handlerNode.node_choose.level))
             self.dev.label_short_3.set_text('Mouse rel: ' + str(self.handlerNode.node_choose.mouse_rel))
+            self.dev.label_long_7.set_text('h-block: ' + str(self.handlerNode.node_choose.h_cost_block))
+            self.dev.label_long_8.set_text('h-cost: ' + str(self.handlerNode.node_choose.h_cost))
+            self.dev.label_long_9.set_text('g-cost: ' + str(self.handlerNode.node_choose.g_cost))
+            self.dev.label_long_10.set_text('% right: ' + str(self.handlerNode.node_choose.percent_right) + ", % false: " + str(self.handlerNode.node_choose.percent_false))
         self.dev.label_long_5.set_text('Max level: ' + str(self.handlerNode.max_level))
         self.dev.label_long_6.set_text('Node-level-arr-count: ' + str(len(self.handlerNode.all_node_level)))
 

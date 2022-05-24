@@ -1,5 +1,3 @@
-from winreg import HKEY_CLASSES_ROOT
-from xml.sax import handler
 import pygame
 import sys, time
 import numpy
@@ -25,6 +23,7 @@ class Node:
         self.init()
 
     def init(self):
+        self.is_minimum = False
         self.is_move = False
         self.is_choose = False
 
@@ -43,7 +42,8 @@ class Node:
         self.children = []
         self.parent = None
 
-        self.percent_right = self.check_percent_right()
+        self.percent_right = round(self.check_percent_right())
+        self.percent_false = 100 - self.percent_right
         self.h_cost_block = []
         self.h_cost = 0
         self.g_cost = 0
@@ -59,6 +59,30 @@ class Node:
         self.interactive_init()
 
     def draw(self):
+        # if self.is_minimum:
+        #     self.surf = pygame.Surface(((self.size/self.ratio + 10)/2, (self.size/self.ratio + 10)/2))
+        #     self.rect = self.surf.get_rect(topleft = (self.pos.x - 5, self.pos.y - 5))
+        #     self.surf.fill(colors.BLUE_CLOUD)
+        #     self.screen.blit(self.surf, self.rect)
+        #     # Draw link to children
+        #     for i in range(len(self.children)):
+        #         pygame.draw.line(self.screen,
+        #                         colors.RED_LIGHT,
+        #                         (self.pos[0] + self.size/6,self.pos[1] + self.size/6),
+        #                         (self.children[i].pos[0] + self.children[i].size/6, self.children[i].pos[1] + self.children[i].size/6),
+        #                         3)  
+
+        #     # Draw link to parent
+        #     if self.parent != None:
+        #         if self.line_color == colors.GREEN_LIME:
+        #             pygame.draw.line(self.screen,
+        #                             self.line_color,
+        #                             (self.pos[0] + self.size/6,self.pos[1] + self.size/6),
+        #                             (self.parent.pos[0] + self.parent.size/6, self.parent.pos[1] + self.parent.size/6),
+        #                             3)  
+        #     return
+
+        self.surf = pygame.Surface((self.size/self.ratio + 10, self.size/self.ratio + 10))
         ### Draw background
         if self.is_choose:
             self.surf.fill(colors.GREEN_LIME)
@@ -104,6 +128,9 @@ class Node:
     def update(self):
         self.move_node()
         self.interactive_update()
+
+    def set_minimum(self, _value):
+        self.is_minimum = _value
 
     def set_cost(self, _cost):
         self.h_cost_block, self.h_cost = _cost
@@ -232,6 +259,8 @@ class Node:
 
     # INTERACTIVE
     def interactive_init(self):
+        if self.is_minimum:
+            return
         if self.handler.frame.__module__ == 'frame_game':
             return
 
@@ -246,7 +275,8 @@ class Node:
         self.text1_rect = self.text1_surf.get_rect(center = self.text1_pos)
 
         self.info2_button_surf = pygame.Surface(((self.size/self.ratio + 10)/8, (self.size/self.ratio + 10)/8))
-        self.info2_button_rect = self.info2_button_surf.get_rect(topleft = (self.pos.x + self.surf.get_width() + 2, self.pos.y + self.info_button_surf.get_height() + 15))
+        self.info2_button_rect = self.info2_button_surf.get_rect(topleft = (self.pos.x + self.surf.get_width() + 2, 
+                                                            self.pos.y + self.info_button_surf.get_height() + 15))
         self.info2_button_surf.fill(colors.GREEN_LIGHT)
         self.info2_button_surf.set_alpha(150)
         self.text2_pos = (self.info2_button_rect.left + self.info2_button_surf.get_width() / 2,
@@ -265,6 +295,8 @@ class Node:
     def interactive_draw(self):
         if self.handler.frame.__module__ == 'frame_game':
             return
+        if self.is_minimum:
+            return
 
         self.screen.blit(self.info_button_surf, self.info_button_rect)
         self.screen.blit(self.text1_surf, self.text1_rect)
@@ -277,11 +309,16 @@ class Node:
     def interactive_update(self):
         if self.handler.frame.__module__ == 'frame_game':
             return
+        if self.is_minimum:
+            return
         pass
 
     # End INTERACTOVE
 
     def create_puzzle(self):
+        if self.is_minimum:
+            return
+
         self.blocks = []
 
         if self.ratio == 3:
@@ -319,7 +356,8 @@ class Node:
                                             None))
             if self.puzzle[i] == 0:
                 self.block_null_index = i
-        self.percent_right = self.check_percent_right()
+        self.percent_right = round(self.check_percent_right())
+        self.percent_false = 100 - (self.percent_right)
         self.interactive_init()
     
     def copy_puzzle(self, a, b):
@@ -342,8 +380,11 @@ class Node:
         count = 0
         for i in range(len(self.puzzle)):
             if self.puzzle[i] == self.handler.goal_puzzle[self.ratio-3][i]:
-                count += 1
-        percent = (count*100)/numpy.power(self.ratio, 2)
+                if self.puzzle[i] == 0:
+                    continue
+                else:
+                    count += 1
+        percent = (count*100)/ (numpy.power(self.ratio, 2)-1)
         return percent
 
     def child_up(self):
@@ -443,6 +484,7 @@ class Node:
         self.child_right()
         self.child_down()
         self.child_left()
+        self.set_zoom(self.zoom)
     
     def move_up(self):
         # Animation

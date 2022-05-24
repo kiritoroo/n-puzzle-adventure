@@ -99,8 +99,7 @@ class Frame:
                                                             relative_rect = pygame.Rect((1000,350), (200, 180)),
                                                             visible = False,
                                                             object_id = "#label_percent")
-                                   
-                                   
+                                         
         # Picture
         self.picture_box1 = None
 
