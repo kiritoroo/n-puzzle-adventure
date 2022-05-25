@@ -8,6 +8,7 @@ import node
 import handler_node
 import dev_support
 import getpass
+import pathlib
 
 pygame.init()
 class Frame:
@@ -21,6 +22,7 @@ class Frame:
     def init(self):
         self.step = 0
         self.is_play = False
+        self.is_solve = False
         self.is_show_dev = False
         self.final_image = None
         self.current_image_path = None
@@ -99,7 +101,7 @@ class Frame:
                                                             relative_rect = pygame.Rect((1000,350), (200, 180)),
                                                             visible = False,
                                                             object_id = "#label_percent")
-                                         
+
         # Picture
         self.picture_box1 = None
 
@@ -118,13 +120,13 @@ class Frame:
                                                                     manager = self.ui_manager)
                                                                     
     def render(self, _display_surface):
-        self.handlerNode.draw()
+        self.handlerNode.draw_root()
         self.ui_manager.draw_ui(_display_surface)
         if self.is_show_dev:
             self.dev.draw(_display_surface)
 
     def update(self, _delta_time):
-        if self.is_play:
+        if self.is_play and self.is_solve == False:
             counter_time = int(round(datetime.datetime.now().timestamp())) - int(round(self.start_time.timestamp()))
             self.label_time.set_text(str(time.strftime('%H:%M:%S', time.gmtime(counter_time))))
             self.label_step.set_text('Step: '+str(self.step))
@@ -138,9 +140,8 @@ class Frame:
                                                                                         action_long_desc = dialog_msg,
                                                                                         window_title ='Congratulations',
                                                                                         manager = self.ui_manager)
-
         self.get_input()
-        self.handlerNode.update()
+        self.handlerNode.update_root()
         self.ui_manager.update(_delta_time)
         if self.is_show_dev:
             self.development()
@@ -178,6 +179,20 @@ class Frame:
                                                                                 initial_file_path = init_path.format(getpass.getuser()),
                                                                                 manager = self.ui_manager)
 
+            if _event.ui_element == self.button_Solve:
+                f = open("data.txt", "w")
+                f.write(str(self.handlerNode.root.puzzle))
+                self.is_solve = True
+                self.handlerNode.set_algorithm('A* (Manhattan)')
+                if self.handlerNode.find_solution() == True:
+                    f.write(' Visited Node: ' + str(len(self.handlerNode.all_node)))
+                    f.write(' Step: ' + str(len(self.handlerNode.solution_path)))
+                    f.write(str(self.handlerNode.solution_path) + '\n')
+                else:
+                    f.write('No solution' + '\n')
+                self.is_solve = False
+                f.close()
+
         if _event.type == pygame_gui.UI_DROP_DOWN_MENU_CHANGED and not self.is_play:
             if _event.ui_element == self.dropdown_choose_picture:
                 if _event.text == 'Only Number':
@@ -204,7 +219,16 @@ class Frame:
         if _event.type == pygame_gui.UI_FILE_DIALOG_PATH_PICKED:
             if _event.ui_element == self.file_dialog:
                 self.current_image_path = _event.text
-                self.set_final_image(self.current_image_path)
+                ext = pathlib.Path(_event.text).suffix
+                if ext == '.png' or ext == '.jpg':
+                    img = pygame.image.load(_event.text)
+                    if img.get_width() == img.get_height():
+                        self.set_final_image(self.current_image_path)
+                    else:
+                        print('Please pick image square size!')
+                else:
+                    print('Please pick Image!')
+                    return
 
         self.ui_manager.process_events(_event)
 
@@ -264,4 +288,11 @@ class Frame:
         self.dev.label_short_3.set_text('Puzzle size: '+str(round(self.handlerNode.root.blocks[0].size)))
         self.dev.label_short_4.set_text('Percent Complete: '+str(round(self.handlerNode.root.percent_right)))
         self.dev.label_long_1.set_text('Frame: '+str(self.handlerNode.frame.__module__))
+        self.dev.label_long_2.set_text('Node count: ' + str(len(self.handlerNode.all_node)))
+        self.dev.label_long_3.set_text('Level max: ' + str(self.handlerNode.max_level))
+        self.dev.label_long_4.set_text('Node count 2: ' + str(self.handlerNode.node_count))
+        if self.handlerNode.solution_path != None:
+            self.dev.label_long_5.set_text('Solution length: ' + str(len(self.handlerNode.solution_path)))
+        else:
+            self.dev.label_long_5.set_text('Solution length: ' + 'None')
 

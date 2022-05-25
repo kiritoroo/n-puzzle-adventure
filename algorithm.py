@@ -121,7 +121,7 @@ class InformedSearch:
             h_cost_min_index = 0
             percent_right_max = queue_list[0].percent_right
             for i in range(len(queue_list)):
-                if queue_list[i].h_cost < h_cost_min and queue_list[i].percent_right:
+                if queue_list[i].h_cost < h_cost_min:
                     h_cost_min = queue_list[i].h_cost
                     percent_right_max = queue_list[i].percent_right
                     h_cost_min_index = i
@@ -180,7 +180,7 @@ class InformedSearch:
             h_cost_min_index = 0
             percent_right_max = queue_list[0].percent_right
             for i in range(len(queue_list)):
-                if queue_list[i].h_cost < h_cost_min and queue_list[i].percent_right:
+                if queue_list[i].h_cost < h_cost_min and queue_list[i].percent_right > percent_right_max:
                     h_cost_min = queue_list[i].h_cost
                     percent_right_max = queue_list[i].percent_right
                     h_cost_min_index = i
@@ -191,8 +191,9 @@ class InformedSearch:
               
             current_node.general_child()
             #current_node.set_minimum(True)
-            
+
             self.screen.fill(colors.WHITE)
+            self.handlerNode.update()
             self.handlerNode.frame.render(self.screen)
             self.handlerNode.frame.update(dt)
     
@@ -205,6 +206,10 @@ class InformedSearch:
                     self.goal_found = True
                     self.goal_node = current_child
                     self.goal_node.set_color(colors.GREEN_LIME)
+                    self.handlerNode.all_node = []
+                    self.handlerNode.get_all_node(self.handlerNode.root)
+
+                    return True
                 if _type == 0:
                     current_child.set_cost(self.manhattan_distance(current_child.puzzle))
                 elif _type == 1:
@@ -213,6 +218,9 @@ class InformedSearch:
                     queue_list.append(current_child)   
                 else:
                     current_child.set_color(colors.RED_DEFAULT)
+            
+            if len(self.handlerNode.all_node) > 5000:
+                return False
     # Distance    
     def manhattan_distance(self, _puzzle):
         _puzzle_2d = numpy.zeros((3,3), dtype = int)

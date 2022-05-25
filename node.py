@@ -35,6 +35,9 @@ class Node:
         self.is_info1_open = False
         self.is_info2_open = False 
 
+        self.is_draw_link_to_child = True
+        self.is_draw_link_to_parent = True
+
         self.mouse_rel = (0,0)
         self.total_width_child = 0
 
@@ -106,23 +109,24 @@ class Node:
                             colors.GRAY_LIGHT,
                             (self.pos.x, i*self.size/numpy.power(self.ratio, 2) + self.pos.y),
                             (self.pos.x + self.size/self.ratio - 2, i*self.size/numpy.power(self.ratio, 2) + self.pos.y))
-
-        # Draw link to children
-        for i in range(len(self.children)):
-            pygame.draw.line(self.screen,
-                            colors.RED_LIGHT,
-                            (self.pos[0] + self.size/6,self.pos[1] + self.size/6),
-                            (self.children[i].pos[0] + self.children[i].size/6, self.children[i].pos[1] + self.children[i].size/6),
-                            3)  
-
-        # Draw link to parent
-        if self.parent != None:
-            if self.line_color == colors.GREEN_LIME:
+        if self.is_draw_link_to_child:
+            # Draw link to children
+            for i in range(len(self.children)):
                 pygame.draw.line(self.screen,
-                                 self.line_color,
-                                 (self.pos[0] + self.size/6,self.pos[1] + self.size/6),
-                                 (self.parent.pos[0] + self.parent.size/6, self.parent.pos[1] + self.parent.size/6),
-                                 3)  
+                                colors.RED_LIGHT,
+                                (self.pos[0] + self.size/6,self.pos[1] + self.size/6),
+                                (self.children[i].pos[0] + self.children[i].size/6, self.children[i].pos[1] + self.children[i].size/6),
+                                3)  
+
+        if self.is_draw_link_to_parent:
+            # Draw link to parent
+            if self.parent != None:
+                if self.line_color == colors.GREEN_LIME:
+                    pygame.draw.line(self.screen,
+                                    self.line_color,
+                                    (self.pos[0] + self.size/6,self.pos[1] + self.size/6),
+                                    (self.parent.pos[0] + self.parent.size/6, self.parent.pos[1] + self.parent.size/6),
+                                    3)  
         self.interactive_draw()
 
     def update(self):
@@ -185,6 +189,12 @@ class Node:
 
     def set_ratio(self, _ratio):
         self.ratio = _ratio
+
+    def set_draw_to_child(self, _value):
+        self.is_draw_link_to_child = _value
+    
+    def set_draw_to_parent(self, _value):
+        self.is_draw_link_to_parent = _value
 
     # HARDCODE
     def check_collider_mouse(self, _key):
@@ -416,6 +426,7 @@ class Node:
             child_node.set_parent(self)
             child_node.set_zoom(self.handler.zoom_rate)
             self.reset_pos_children()
+            self.handler.node_count +=1
 
 
     def child_right(self):
@@ -441,6 +452,7 @@ class Node:
             child_node.set_parent(self)
             child_node.set_zoom(self.handler.zoom_rate)
             self.reset_pos_children()
+            self.handler.node_count +=1
 
     def child_down(self):
         n = self.block_null_index
@@ -465,6 +477,7 @@ class Node:
             child_node.set_parent(self)
             child_node.set_zoom(self.handler.zoom_rate)
             self.reset_pos_children()
+            self.handler.node_count +=1
 
     def child_left(self):
         n = self.block_null_index
@@ -489,6 +502,7 @@ class Node:
             child_node.set_parent(self) 
             child_node.set_zoom(self.handler.zoom_rate)
             self.reset_pos_children()
+            self.handler.node_count +=1
 
     def general_child(self):
         self.child_up()

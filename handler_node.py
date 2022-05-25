@@ -4,6 +4,7 @@ import settings
 import numpy
 import algorithm
 import colors
+import sys
 
 pygame.init()
 clock = pygame.time.Clock()
@@ -21,7 +22,6 @@ class HandlerNode:
                             [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0],
                             [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,0])
         numpy.random.shuffle(self.start_puzzle[self.ratio-3])
-
         self.node_choose = None
         self.index_choose = None
 
@@ -29,9 +29,10 @@ class HandlerNode:
         self.all_node_level = []
 
         self.max_level = 0
+        self.node_count = 1
 
-        self.solution_puzzle_path = None
-        self.solution_puzzle_node = None
+        self.solution_path = None
+        self.solution_node = None
 
         self.str_algorithm = 'BFS'
         self.algorithm = algorithm.UniformedSearch()
@@ -44,10 +45,19 @@ class HandlerNode:
         spawn_point = (settings.SCREEN_WIDTH/2 - (node_size/6) + offset.x,
                     settings.SCREEN_HEIGHT/2 - (node_size/6) + offset.y)
         self.root = node.Node(self.screen, self.start_puzzle[self.ratio-3], 0, node_size, int(self.ratio), spawn_point, self)
+        self.root.set_draw_to_child(False)
+        self.root.set_draw_to_parent(False)
         self.get_all_node(self.root)
 
         if self.frame.__module__ == 'frame_simulator':
             self.proplem_node = node.Node(self.screen, self.root.puzzle, 0, 300, self.ratio, (1130,530), self)
+
+    def draw_root(self):
+        self.root.draw()
+
+    def update_root(self):
+        self.root.update()
+
 
     def draw(self):
         for i in range(len(self.all_node)):
@@ -107,11 +117,12 @@ class HandlerNode:
         if self.str_algorithm == 'BFS':
             self.algorithm.bfs()
         elif self.str_algorithm == 'A* (Manhattan)':
-            self.algorithm.a_star_quickly(0)
+            if self.algorithm.a_star_quickly(0) == False:
+                return False
         self.solution_path = self.algorithm.solution_path()
         self.create_solution_node()
-        self.reset_handler()
         self.play_solution_root()
+        return True
 
     def create_solution_node(self):
         self.solution_node = []
@@ -153,15 +164,24 @@ class HandlerNode:
         if self.solution_path == None:
             return
         for i in range(len(self.solution_path)):
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                self.frame.ui_event(event)
+            
             self.root.set_puzzle(self.solution_path[i])               
             self.root.draw()
             pygame.display.update()
-            clock.tick(5)
+            clock.tick(10)
     # End Algorithm
 
     # HARDCORE
     def reset_handler(self):
         self.all_node = []
+        self.node_count = 1
+        self.solution_path = None
+        self.solution_node = None
         self.index_choose = None
         self.node_choose = None
         self.root.set_children([])
