@@ -79,6 +79,9 @@ class HandlerNode:
         elif _str_algorithm == "A* (Manhattan)":
             self.algorithm = algorithm.InformedSearch()
             self.str_algorithm = "A* (Manhattan)"
+        elif _str_algorithm == "A* (Euclidean)":
+            self.algorithm = algorithm.InformedSearch()
+            self.str_algorithm = "A* (Euclidean)"
         elif _str_algorithm == "Hill Climb":
             self.algorithm = algorithm.LocalSearch()
             self.str_algorithm = 'Hill Climb'
@@ -90,11 +93,25 @@ class HandlerNode:
         if self.str_algorithm == 'BFS':
             self.algorithm.bfs()
         elif self.str_algorithm == 'A* (Manhattan)':
-            self.algorithm.a_star()
+            self.algorithm.a_star(0)
+        elif self.str_algorithm == 'A* (Euclidean)':
+            self.algorithm.a_star(1)
         elif self.str_algorithm == 'Hill Climb':
             self.algorithm.hill_climb()
         self.solution_path = self.algorithm.solution_path()
         self.create_solution_node()
+    
+    def find_solution(self):
+        self.reset_handler()
+        self.algorithm.init_all(self.screen, self.root, self.goal_puzzle[self.ratio-3], self)
+        if self.str_algorithm == 'BFS':
+            self.algorithm.bfs()
+        elif self.str_algorithm == 'A* (Manhattan)':
+            self.algorithm.a_star_quickly(0)
+        self.solution_path = self.algorithm.solution_path()
+        self.create_solution_node()
+        self.reset_handler()
+        self.play_solution_root()
 
     def create_solution_node(self):
         self.solution_node = []
@@ -129,6 +146,15 @@ class HandlerNode:
             
             self.proplem_node.set_color("ORANGE")
             self.proplem_node.draw()
+            pygame.display.update()
+            clock.tick(5)
+
+    def play_solution_root(self):
+        if self.solution_path == None:
+            return
+        for i in range(len(self.solution_path)):
+            self.root.set_puzzle(self.solution_path[i])               
+            self.root.draw()
             pygame.display.update()
             clock.tick(5)
     # End Algorithm

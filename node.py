@@ -263,6 +263,8 @@ class Node:
             return
         if self.handler.frame.__module__ == 'frame_game':
             return
+        if self.handler.frame.__module__ == 'frame_compare':
+            return
 
         # Button
         self.info_button_surf = pygame.Surface(((self.size/self.ratio + 10)/8, (self.size/self.ratio + 10)/8))
@@ -295,6 +297,8 @@ class Node:
     def interactive_draw(self):
         if self.handler.frame.__module__ == 'frame_game':
             return
+        if self.handler.frame.__module__ == 'frame_compare':
+            return
         if self.is_minimum:
             return
 
@@ -308,6 +312,8 @@ class Node:
 
     def interactive_update(self):
         if self.handler.frame.__module__ == 'frame_game':
+            return
+        if self.handler.frame.__module__ == 'frame_compare':
             return
         if self.is_minimum:
             return
@@ -408,7 +414,9 @@ class Node:
             child_node.set_image(self.path, self.ratio)
             self.children.append(child_node)
             child_node.set_parent(self)
+            child_node.set_zoom(self.handler.zoom_rate)
             self.reset_pos_children()
+
 
     def child_right(self):
         n = self.block_null_index
@@ -431,6 +439,7 @@ class Node:
             child_node.set_image(self.path, self.ratio)
             self.children.append(child_node)
             child_node.set_parent(self)
+            child_node.set_zoom(self.handler.zoom_rate)
             self.reset_pos_children()
 
     def child_down(self):
@@ -454,6 +463,7 @@ class Node:
             child_node.set_image(self.path, self.ratio)
             self.children.append(child_node)
             child_node.set_parent(self)
+            child_node.set_zoom(self.handler.zoom_rate)
             self.reset_pos_children()
 
     def child_left(self):
@@ -477,6 +487,7 @@ class Node:
             child_node.set_image(self.path, self.ratio)
             self.children.append(child_node)
             child_node.set_parent(self) 
+            child_node.set_zoom(self.handler.zoom_rate)
             self.reset_pos_children()
 
     def general_child(self):
@@ -484,7 +495,6 @@ class Node:
         self.child_right()
         self.child_down()
         self.child_left()
-        self.set_zoom(self.zoom)
     
     def move_up(self):
         # Animation

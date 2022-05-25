@@ -27,6 +27,7 @@ class Frame:
         self.zoom = 1
         self.final_image = None
         self.current_image_path = None
+        self.stop = False
 
         self.dev = dev_support.DEV(self)
         self.handlerNode = handler_node.HandlerNode(self.screen, self, self.current_ratio, 300)
@@ -128,9 +129,9 @@ class Frame:
         # Drop down
         rect_choose_algorithm = pygame.Rect((15,440), (250, 35))
         self.rect_list.append(rect_choose_algorithm)
-        algorithm_options = ['BFS', 'A* (Manhattan)', 'Hill Climb']
+        algorithm_options = ['BFS', 'A* (Manhattan)', 'A* (Euclidean)', 'Hill Climb']
         self.dropdown_choose_algorithm = pygame_gui.elements.UIDropDownMenu(options_list = algorithm_options,
-                                                                    starting_option = algorithm_options[0],
+                                                                    starting_option = algorithm_options[1],
                                                                     relative_rect = rect_choose_algorithm,
                                                                     manager = self.ui_manager)
 
@@ -219,6 +220,7 @@ class Frame:
 
         if _event.type == pygame_gui.UI_BUTTON_PRESSED:
             if _event.ui_element == self.button_back:
+                self.stop = True
                 self.frame_handler.set_current_frame('frame_menu')
             if _event.ui_element == self.button_solve:
                 self.handlerNode.solve_all ()
