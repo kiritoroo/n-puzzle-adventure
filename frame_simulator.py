@@ -8,6 +8,7 @@ import node
 import time
 import datetime
 import numpy
+import data
 
 class Frame:
     def __init__(self, _frame_handler, _screen):
@@ -31,7 +32,9 @@ class Frame:
 
         self.dev = dev_support.DEV(self)
         self.handlerNode = handler_node.HandlerNode(self.screen, self, self.current_ratio, 300)
-
+        self.handlerNode.root.set_draw_to_child(True)
+        self.handlerNode.root.set_puzzle(data.puzzle_random[0])
+        self.handlerNode.proplem_node.set_puzzle(data.puzzle_random[0])
     def ui_elements(self):
         
         #button
@@ -81,12 +84,6 @@ class Frame:
 
         rect_ok1 = pygame.Rect((225, 540), (40, 35))
         self.button_set_start = pygame_gui.elements.UIButton(relative_rect = rect_ok1,
-                                                        text = "OK",
-                                                        manager = self.ui_manager,
-                                                        object_id = "#button_ok")
-
-        rect_ok2 = pygame.Rect((225, 580), (40, 35))
-        self.button_set_goal = pygame_gui.elements.UIButton(relative_rect = rect_ok2,
                                                         text = "OK",
                                                         manager = self.ui_manager,
                                                         object_id = "#button_ok")
@@ -143,7 +140,16 @@ class Frame:
         self.input_goal_state = pygame_gui.elements.UITextEntryLine(relative_rect = pygame.Rect((15, 580), (215, 35)),
                                                                      manager = self.ui_manager,
                                                                      object_id = "#input_1")
-       
+        # Drop down
+        rect_choose_puzzle = pygame.Rect((15, 580), (250, 35))
+        self.rect_list.append(rect_choose_puzzle)
+        self.puzzle_options = []
+        for i in range(len(data.puzzle_random)):
+            self.puzzle_options.append(str(i))
+        self.dropdown_choose_puzzle = pygame_gui.elements.UIDropDownMenu(options_list = self.puzzle_options,
+                                                                    starting_option = self.puzzle_options[0],
+                                                                    relative_rect = rect_choose_puzzle,
+                                                                    manager = self.ui_manager)
         # Drop down
         rect_choose_picture = pygame.Rect((25, 50), (150, 40))
         self.rect_list.append(rect_choose_picture)
@@ -154,7 +160,7 @@ class Frame:
                                                                     manager = self.ui_manager)
         rect_choose_level = pygame.Rect((25, 90), (150, 40))
         self.rect_list.append(rect_choose_level)
-        self.level_options = ['Easy', 'Medium', 'Hard', 'Legend']
+        self.level_options = ['Easy', 'Legend']
         self.dropdown_choose_level = pygame_gui.elements.UIDropDownMenu(options_list = self.level_options,
                                                                     starting_option = self.level_options[0],
                                                                     relative_rect = rect_choose_level,
@@ -221,6 +227,8 @@ class Frame:
         if _event.type == pygame_gui.UI_BUTTON_PRESSED:
             if _event.ui_element == self.button_back:
                 self.stop = True
+                self.handlerNode.reset_handler()
+                self.handlerNode.set_run(False)
                 self.frame_handler.set_current_frame('frame_menu')
             if _event.ui_element == self.button_solve:
                 self.handlerNode.solve_all ()
@@ -228,8 +236,6 @@ class Frame:
                 self.handlerNode.play_solution()
             if _event.ui_element == self.button_set_start:
                 self.handlerNode.set_root(self.input_start_state.get_text())
-            if _event.ui_element == self.button_set_goal:
-                self.handlerNode.set_goal(self.input_goal_state.get_text())
             if self.handlerNode.node_choose != None:
                 if _event.ui_element == self.button_general:
                     self.handlerNode.node_choose.general_child()
@@ -247,6 +253,9 @@ class Frame:
             self.handlerNode.zoom(self.zoom)
 
         if _event.type == pygame_gui.UI_DROP_DOWN_MENU_CHANGED:
+            if _event.ui_element == self.dropdown_choose_puzzle:
+                self.handlerNode.root.set_puzzle(data.puzzle_random[int(_event.text)])
+                self.handlerNode.proplem_node.set_puzzle(data.puzzle_random[int(_event.text)])
             if _event.ui_element == self.dropdown_choose_picture:
                 if _event.text == 'Only Number':
                     self.current_image_path = None
@@ -328,5 +337,4 @@ class Frame:
             self.dev.label_long_10.set_text('% right: ' + str(self.handlerNode.node_choose.percent_right) + ", % false: " + str(self.handlerNode.node_choose.percent_false))
         self.dev.label_long_5.set_text('Max level: ' + str(self.handlerNode.max_level))
         self.dev.label_long_6.set_text('Node-level-arr-count: ' + str(len(self.handlerNode.all_node_level)))
-
-
+# Final Build

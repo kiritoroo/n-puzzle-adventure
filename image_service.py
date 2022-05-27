@@ -19,3 +19,4 @@ def split_image(_path, _ratio):
         x = 0
         y += image.get_height() / _ratio
     return image_list
+# Final Build

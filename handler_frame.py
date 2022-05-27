@@ -19,3 +19,4 @@ class HandlerFrame:
             self.current_frame = frame_compare.Frame(self, self.screen)
         else:
             return
+# Final Build

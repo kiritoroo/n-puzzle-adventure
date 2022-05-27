@@ -11,6 +11,7 @@ import node
 import dev_support
 import getpass
 import multiprocessing
+import data
 
 class Frame:
     def __init__(self, _frame_handler, _screen):
@@ -24,26 +25,44 @@ class Frame:
     def init(self):
         self.is_play = False
         self.is_show_dev = False
-        self.final_puzzle = [1,2,3,0,5,6,4
-        
-        ,7,8]
-
+        self.final_puzzle = [1,2,3,0,5,6,7,8,4]
         self.ratio = (3,4,5)
         self.current_ratio = self.ratio[0]
+
+        self.state1 = 'WAITTING'
+        self.state2 = 'WAITTING'
+        self.state3 = 'WAITTING'
+        self.state4 = 'WAITTING'
+
         self.handlerNode1 = handler_node.HandlerNode(self.screen, self, self.current_ratio, 500)
         self.handlerNode2 = handler_node.HandlerNode(self.screen, self, self.current_ratio, 500)
         self.handlerNode3 = handler_node.HandlerNode(self.screen, self, self.current_ratio, 500)
         self.handlerNode4 = handler_node.HandlerNode(self.screen, self, self.current_ratio, 500)
+
         self.handlerNode1.root.set_pos((460,60))
         self.handlerNode2.root.set_pos((890,60))
         self.handlerNode3.root.set_pos((460,390))
         self.handlerNode4.root.set_pos((890,390))
+
         self.handlerNode1.root.set_puzzle(self.final_puzzle)
         self.handlerNode2.root.set_puzzle(self.final_puzzle)
         self.handlerNode3.root.set_puzzle(self.final_puzzle)
         self.handlerNode4.root.set_puzzle(self.final_puzzle)
 
+        self.handlerNode1.root.set_draw_to_child(False)
+        self.handlerNode2.root.set_draw_to_child(False)
+        self.handlerNode3.root.set_draw_to_child(False)
+        self.handlerNode4.root.set_draw_to_child(False)
 
+        self.handlerNode1.set_algorithm('A* (Manhattan)')
+        self.handlerNode2.set_algorithm('Hill Climb')
+        self.handlerNode3.set_algorithm('A* (Euclidean)')
+        self.handlerNode4.set_algorithm('BFS')
+
+        self.dropdown_choose_1.disable()
+        self.dropdown_choose_2.disable()
+        self.dropdown_choose_3.disable()
+        self.dropdown_choose_4.disable()
 
         self.dev = dev_support.DEV(self)
 
@@ -79,38 +98,21 @@ class Frame:
                                                                       text = "F2 - Open/Close Development",
                                                                       relative_rect = pygame.Rect((10,0), (290, 20)),
                                                                       object_id = "#label_dev_1")
-        self.label_timeAVG = pygame_gui.elements.ui_label.UILabel(manager= self.ui_manager,
-                                                                  text = "Time AVG:",
-                                                                  relative_rect = pygame.Rect((35,50),(130,500)),
-                                                                  object_id= "#label_guide_1")
-        self.label_stepAVG = pygame_gui.elements.ui_label.UILabel(manager= self.ui_manager,
-                                                                  text = "Step AVG:",
-                                                                  relative_rect = pygame.Rect((35,50),(130,600)),
-                                                                  object_id= "#label_guide_1")
-        self.label_time = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
-                                                            text = "00:00:00",
-                                                            relative_rect = pygame.Rect((40,50), (350, 500)),
-                                                            object_id = "#label_time_1")
-        self.label_step = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
-                                                            text = "0",
-                                                            relative_rect = pygame.Rect((40,50), (250, 600)),
-                                                            object_id = "#label_time_1")
-
         self.label_timetext1 = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
                                                             text = "Time: 00:00",
-                                                            relative_rect = pygame.Rect((680,30), (150, 30)),
+                                                            relative_rect = pygame.Rect((650,30), (180, 30)),
                                                             object_id= "#label_text")
         self.label_timetext2 = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
                                                             text = "Time: 00:00",
-                                                            relative_rect = pygame.Rect((680,380), (150, 30)),
+                                                            relative_rect = pygame.Rect((1080,30), (180, 30)),
                                                             object_id= "#label_text")
         self.label_timetext3 = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
                                                             text = "Time: 00:00",
-                                                            relative_rect = pygame.Rect((1110,30), (150, 30)),
+                                                            relative_rect = pygame.Rect((650,380), (180, 30)),
                                                             object_id= "#label_text")
         self.label_timetext4 = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
                                                             text = "Time: 00:00",
-                                                            relative_rect = pygame.Rect((1110,380), (150, 30)),
+                                                            relative_rect = pygame.Rect((1080,380), (180, 30)),
                                                             object_id= "#label_text")
 
 
@@ -126,10 +128,28 @@ class Frame:
                                                             text = "visited node: ",
                                                             relative_rect = pygame.Rect((425,600), (200, 20)),
                                                             object_id= "#label_text_small")
-        self.label_nod_count4 = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
+        self.label_node_count4 = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
                                                             text = "visited node: ",
                                                             relative_rect = pygame.Rect((855,600), (200, 20)),
                                                             object_id= "#label_text_small")
+        
+        self.label_state_1 = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
+                                                            text = "WAITING",
+                                                            relative_rect = pygame.Rect((625,155), (200, 25)),
+                                                            object_id= "#label_text_waitting")
+        self.label_state_2 = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
+                                                            text = "WAITING",
+                                                            relative_rect = pygame.Rect((1055,155), (200, 25)),
+                                                            object_id= "#label_text_waitting")
+        self.label_state_3 = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
+                                                            text = "WAITING",
+                                                            relative_rect = pygame.Rect((625,500), (200, 25)),
+                                                            object_id= "#label_text_waitting")
+        self.label_state_4 = pygame_gui.elements.ui_label.UILabel(manager = self.ui_manager,
+                                                            text = "WAITING",
+                                                            relative_rect = pygame.Rect((1055,500), (200, 25)),
+                                                            object_id= "#label_text_waitting")
+
         #button
         rect_push = pygame.Rect((30, 670), (100, 50))
         self.button_back = pygame_gui.elements.UIButton(relative_rect = rect_push,
@@ -146,20 +166,20 @@ class Frame:
                                                         text = "OK",
                                                         manager = self.ui_manager,
                                                         object_id = "#button_ok")
-        rect_ok_goal = pygame.Rect((270, 450), (40, 35))
-        self.button_ok_goal = pygame_gui.elements.UIButton(relative_rect = rect_ok_goal,
-                                                        text = "OK",
-                                                        manager = self.ui_manager,
-                                                        object_id = "#button_ok")
         
         #textbox
         self.input_start_state = pygame_gui.elements.UITextEntryLine(relative_rect = pygame.Rect((40,400), (230, 35)),
                                                                      manager = self.ui_manager,
                                                                      object_id = "#input_1")
-        self.input_goal_state = pygame_gui.elements.UITextEntryLine(relative_rect = pygame.Rect((40,450), (230, 35)),
-                                                                     manager = self.ui_manager,
-                                                                     object_id = "#input_1")
-        
+        rect_choose_puzzle = pygame.Rect((40,450), (270, 35))
+        self.puzzle_options = []
+        for i in range(len(data.puzzle_random)):
+            self.puzzle_options.append(str(i))
+        self.dropdown_choose_puzzle = pygame_gui.elements.UIDropDownMenu(options_list = self.puzzle_options,
+                                                                    starting_option = self.puzzle_options[0],
+                                                                    relative_rect = rect_choose_puzzle,
+                                                                    manager = self.ui_manager)
+
         #dropdown
         rect_choose_1 = pygame.Rect((420,295), (270, 35)) #Node 1
         combobox_options_1 = ['BFS', 'A* (Manhattan)', 'A* (Euclidean)', 'Hill Climb']
@@ -170,36 +190,67 @@ class Frame:
         rect_choose_2 = pygame.Rect((850,295), (270, 35)) #Node 2
         combobox_options_2 = ['BFS', 'A* (Manhattan)', 'A* (Euclidean)', 'Hill Climb']
         self.dropdown_choose_2 = pygame_gui.elements.UIDropDownMenu(options_list = combobox_options_2,
-                                                                    starting_option = combobox_options_2[1],
+                                                                    starting_option = combobox_options_2[3],
                                                                     relative_rect = rect_choose_2,
                                                                     manager = self.ui_manager)
         rect_choose_3 = pygame.Rect((420,635), (270, 35)) #Node 3
         combobox_options_3 = ['BFS', 'A* (Manhattan)', 'A* (Euclidean)', 'Hill Climb']
         self.dropdown_choose_3 = pygame_gui.elements.UIDropDownMenu(options_list = combobox_options_3,
-                                                                    starting_option = combobox_options_3[1],
+                                                                    starting_option = combobox_options_3[2],
                                                                     relative_rect = rect_choose_3,
                                                                     manager = self.ui_manager)
         rect_choose_4 = pygame.Rect((850,635), (270, 35)) #Node 4
         combobox_options_4 = ['BFS', 'A* (Manhattan)', 'A* (Euclidean)', 'Hill Climb']
         self.dropdown_choose_4 = pygame_gui.elements.UIDropDownMenu(options_list = combobox_options_4,
-                                                                    starting_option = combobox_options_4[1],
+                                                                    starting_option = combobox_options_4[0],
                                                                     relative_rect = rect_choose_4,
                                                                     manager = self.ui_manager)
         
     def ui_event(self, _event):
         if _event.type == pygame_gui.UI_BUTTON_PRESSED:
             if _event.ui_element == self.button_back:
+                self.handlerNode1.set_run(False)
+                self.handlerNode2.set_run(False)
+                self.handlerNode3.set_run(False)
+                self.handlerNode4.set_run(False)
                 self.frame_handler.set_current_frame('frame_menu')
             if _event.ui_element == self.button_Play:
                 self.is_play = True
+
+                self.label_timetext1.set_text('Time: 00:00s')
+                self.label_timetext2.set_text('Time: 00:00s')
+                self.label_timetext3.set_text('Time: 00:00s')
+                self.label_timetext4.set_text('Time: 00:00s')
+
+                self.state1 = 'FINDING'
+                self.start_time1 = datetime.datetime.now()
                 p1 = multiprocessing.Process(target = self.handlerNode1.find_solution())
-                p2 = multiprocessing.Process(target = self.handlerNode2.find_solution())
-                p3 = multiprocessing.Process(target = self.handlerNode3.find_solution())
-                p4 = multiprocessing.Process(target = self.handlerNode4.find_solution())
                 p1.start()
+                self.state1 = 'FINAL'
+
+                self.state2 = 'FINDING'
+                self.start_time2 = datetime.datetime.now()
+                p2 = multiprocessing.Process(target = self.handlerNode2.find_solution())
                 p2.start()
+                self.state2 = 'FINAL'
+
+                self.state3 = 'FINDING'
+                self.start_time3 = datetime.datetime.now()
+                p3 = multiprocessing.Process(target = self.handlerNode3.find_solution())
                 p3.start()
+                self.state3 = 'FINAL'
+
+                self.state4 = 'FINDING'
+                self.start_time4 = datetime.datetime.now()
+                p4 = multiprocessing.Process(target = self.handlerNode4.find_solution())
                 p4.start()
+                self.state4 = 'FINAL'
+
+            if _event.ui_element == self.button_ok_start:
+                self.handlerNode1.set_root(self.input_start_state.get_text())
+                self.handlerNode2.set_root(self.input_start_state.get_text())
+                self.handlerNode3.set_root(self.input_start_state.get_text())
+                self.handlerNode4.set_root(self.input_start_state.get_text())
 
         if _event.type == pygame.KEYDOWN:
             if _event.key == pygame.K_F2:
@@ -209,6 +260,11 @@ class Frame:
                     self.is_show_dev = True
 
         if _event.type == pygame_gui.UI_DROP_DOWN_MENU_CHANGED:
+            if _event.ui_element == self.dropdown_choose_puzzle:
+                self.handlerNode1.root.set_puzzle(data.puzzle_random[int(_event.text)])
+                self.handlerNode2.root.set_puzzle(data.puzzle_random[int(_event.text)])
+                self.handlerNode3.root.set_puzzle(data.puzzle_random[int(_event.text)])
+                self.handlerNode4.root.set_puzzle(data.puzzle_random[int(_event.text)])
             if _event.ui_element == self.dropdown_choose_1:
                 self.handlerNode1.set_algorithm(_event.text)
             if _event.ui_element == self.dropdown_choose_2:
@@ -222,23 +278,42 @@ class Frame:
             
     def render(self, _display_surface):
         self.ui_manager.draw_ui(_display_surface)
-        self.handlerNode1.draw()
-        self.handlerNode2.draw()
-        self.handlerNode3.draw()
-        self.handlerNode4.draw()
+        self.handlerNode1.draw_root()
+        self.handlerNode2.draw_root()
+        self.handlerNode3.draw_root()
+        self.handlerNode4.draw_root()
         if self.is_show_dev:
             self.dev.draw(_display_surface)
 
     def update(self, _delta_time):
-        self.handlerNode1.update()
-        self.handlerNode2.update()
-        self.handlerNode3.update()
-        self.handlerNode4.update()
+        self.handlerNode1.update_root()
+        self.handlerNode2.update_root()
+        self.handlerNode3.update_root()
+        self.handlerNode4.update_root()
         self.ui_manager.update(_delta_time)
         self.development()
         self.dev.update(_delta_time)
 
+        self.label_node_count1.set_text('visited node: ' + str(self.handlerNode1.node_count))
+        self.label_node_count2.set_text('visited node: ' + str(self.handlerNode2.node_count))
+        self.label_node_count3.set_text('visited node: ' + str(self.handlerNode3.node_count))
+        self.label_node_count4.set_text('visited node: ' + str(self.handlerNode4.node_count))
+
+        if self.handlerNode1.node_count > 4999:
+            self.state1 = 'OVERTIME'
+        if self.handlerNode2.node_count > 4999:
+            self.state2 = 'OVERTIME'
+        if self.handlerNode3.node_count > 4999:
+            self.state3 = 'OVERTIME'
+        if self.handlerNode4.node_count > 4999:
+            self.state4 = 'OVERTIME'
+    
+        self.label_state_1.set_text(self.state1)
+        self.label_state_2.set_text(self.state2)
+        self.label_state_3.set_text(self.state3)
+        self.label_state_4.set_text(self.state4)
+
     def development(self):
         pass
-
+# Final Build
 

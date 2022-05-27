@@ -130,6 +130,8 @@ class Node:
         self.interactive_draw()
 
     def update(self):
+        if self.is_same_puzzle(self.handler.goal_puzzle[self.ratio-3]):
+            self.set_color(colors.GREEN_LIME)
         self.move_node()
         self.interactive_update()
 
@@ -713,3 +715,4 @@ class Node:
         next_puzzle[n-1] = next_puzzle[n]
         next_puzzle[n] = temp
         self.set_puzzle(next_puzzle)
+# Final Build

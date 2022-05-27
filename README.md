@@ -23,7 +23,7 @@
 
 ## Features
 - 8 Puzzle game 🎮
-- Algorithm Simulator 🔧
+- General Tree 🔧
 - Compare Algorithm 🍉
 
 ## Request

@@ -208,6 +208,62 @@
             "italic": "0"
         }
     },
+    "#label_text_waitting":
+    {
+        "colours":
+        {
+            "normal_text": "#FF5151"
+        },
+        "font":
+        {
+            "name": "fira_code",
+            "size": "20",
+            "bold": "0",
+            "italic": "0"
+        }
+    },
+    "#label_text_finding":
+    {
+        "colours":
+        {
+            "normal_text": "#5EA2D1"
+        },
+        "font":
+        {
+            "name": "fira_code",
+            "size": "20",
+            "bold": "0",
+            "italic": "0"
+        }
+    },
+    "#label_text_final":
+    {
+        "colours":
+        {
+            "normal_text": "#C4FDD3"
+        },
+        "font":
+        {
+            "name": "fira_code",
+            "size": "20",
+            "bold": "0",
+            "italic": "0"
+        }
+    },
+    "#label_text_overtime":
+    {
+        "colours":
+        {
+            "normal_text": "#EF9395"
+        },
+        "font":
+        {
+            "name": "fira_code",
+            "size": "20",
+            "bold": "0",
+            "italic": "0"
+        }
+    },
     "#label_guide":
    {
         "colours":
@@ -254,7 +310,7 @@
         {
             "colours":
             {
-                "normal_text": "#3cb2ec"
+                "normal_text": "#54A0CC"
             },
             "font":
             {

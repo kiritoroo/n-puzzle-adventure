@@ -29,6 +29,8 @@ class Frame:
         self.ratio = (3,4,5)
         self.current_ratio = self.ratio[0]
 
+        self.run = True
+
         self.handlerNode = handler_node.HandlerNode(self.screen, self, self.current_ratio, 1000)
         self.dev = dev_support.DEV(self)
         self.final_image_puzzle = node.Node(self.screen, self.handlerNode.goal_puzzle[self.current_ratio-3], 0, 400, int(self.current_ratio), (settings.SCREEN_WIDTH-245, 190), self.handlerNode)
@@ -113,7 +115,7 @@ class Frame:
                                                                     relative_rect = rect_choose_picture,
                                                                     manager = self.ui_manager)
         rect_choose_level = pygame.Rect((100, 180), (150, 60))
-        self.level_options = ['Easy', 'Medium', 'Hard', 'Legend']
+        self.level_options = ['Easy', 'Easy', 'Easy', 'Legend']
         self.dropdown_choose_level = pygame_gui.elements.UIDropDownMenu(options_list = self.level_options,
                                                                     starting_option = self.level_options[0],
                                                                     relative_rect = rect_choose_level,
@@ -126,6 +128,42 @@ class Frame:
             self.dev.draw(_display_surface)
 
     def update(self, _delta_time):
+        if self.current_ratio > 3:
+            self.button_Solve.disable()
+        else:
+            self.button_Solve.enable()
+
+        if self.is_solve:
+            self.dropdown_choose_level.disable()
+            self.dropdown_choose_picture.disable()
+            self.button_Shuffle.visible = False
+            self.button_Play.visible = False
+            self.button_Solve.visible = False
+        else:
+            self.dropdown_choose_level.enable()
+            self.dropdown_choose_picture.enable()
+            self.button_Shuffle.visible = True
+            if not self.is_play:
+                self.button_Play.visible = True
+            self.button_Solve.visible = True
+
+            ''' Training Section
+            self.handlerNode.shuffle_puzzle(self.handlerNode.root)
+            f = open("data.txt", "a")
+            self.is_solve = True
+            self.handlerNode.set_algorithm('Hill Climb')
+            f.write(str(self.handlerNode.root.puzzle))
+            if self.handlerNode.find_solution() == True:
+                f.write(', Visited Node: ' + str(self.handlerNode.node_count))
+                f.write(', Total Step: ' + str(len(self.handlerNode.solution_path)))
+                f.write(', Solution Path: ' + str(self.handlerNode.solution_path))
+            else:
+                f.write(' No Solution')
+            f.write('\n')
+            f.close()
+            self.is_solve = False
+            '''
+
         if self.is_play and self.is_solve == False:
             counter_time = int(round(datetime.datetime.now().timestamp())) - int(round(self.start_time.timestamp()))
             self.label_time.set_text(str(time.strftime('%H:%M:%S', time.gmtime(counter_time))))
@@ -134,9 +172,11 @@ class Frame:
             if self.handlerNode.root.is_same_puzzle(self.handlerNode.goal_puzzle[self.current_ratio-3]):
                 self.is_play = False
                 # Dialog message
-                dialog_msg = '<b>You Win<br><br>Total time: '+str(self.label_time.text)+'</b><br>'
+                if self.run is True:
+                    return
+                dialog_msg = '<b>You Win<br>Total time: '+str(self.label_time.text)+'</b><br>'
                 rect_win = pygame.Rect((settings.SCREEN_WIDTH/2 - (300/2), settings.SCREEN_HEIGHT/2 - (150/2)), (300, 150))
-                self.dialog_win = pygame_gui.windows.ui_confirmation_dialog.UIConfirmationDialog(rect = rect_win,
+                self.dialog_win_2 = pygame_gui.windows.ui_confirmation_dialog.UIConfirmationDialog(rect = rect_win,
                                                                                         action_long_desc = dialog_msg,
                                                                                         window_title ='Congratulations',
                                                                                         manager = self.ui_manager)
@@ -159,11 +199,14 @@ class Frame:
 
         if _event.type == pygame_gui.UI_BUTTON_PRESSED:
             if _event.ui_element == self.button_Back:
+                self.run = False
+                self.handlerNode.set_run(False)
                 self.frame_handler.set_current_frame('frame_menu')
             if _event.ui_element == self.button_Shuffle and not self.is_play:
                 self.handlerNode.shuffle_puzzle(self.handlerNode.root)
             if _event.ui_element == self.button_Play and not self.is_play:
                 self.is_play = True
+                self.is_solve = False
                 self.button_Play.visible = False
                 self.button_Shuffle.visible = False
                 self.dropdown_choose_picture.disable()
@@ -180,18 +223,45 @@ class Frame:
                                                                                 manager = self.ui_manager)
 
             if _event.ui_element == self.button_Solve:
-                f = open("data.txt", "w")
-                f.write(str(self.handlerNode.root.puzzle))
+                if self.level_options[self.current_ratio-3] == 'Hard' or self.level_options[self.current_ratio-3] == 'Medium':
+                    # Dialog message
+                    dialog_msg = 'No Support!, hihi'
+                    rect_win = pygame.Rect((settings.SCREEN_WIDTH/2 - (300/2), settings.SCREEN_HEIGHT/2 - (150/2)), (300, 150))
+                    self.dialog_win_4 = pygame_gui.windows.ui_confirmation_dialog.UIConfirmationDialog(rect = rect_win,
+                                                                                            action_long_desc = dialog_msg,
+                                                                                            window_title ='Solution info',
+                                                                                            manager = self.ui_manager)
+                    return
+                f = open("data.txt", "a")
                 self.is_solve = True
                 self.handlerNode.set_algorithm('A* (Manhattan)')
-                if self.handlerNode.find_solution() == True:
-                    f.write(' Visited Node: ' + str(len(self.handlerNode.all_node)))
-                    f.write(' Step: ' + str(len(self.handlerNode.solution_path)))
-                    f.write(str(self.handlerNode.solution_path) + '\n')
+                f.write(str(self.handlerNode.root.puzzle))
+                start_time = datetime.datetime.now()
+                if self.handlerNode.find_solution() == True and self.run:
+                    end_time = datetime.datetime.now()
+                    execute_time = int(round(end_time.timestamp())) - int(round(start_time.timestamp()))
+                    f.write(' Visited Node: ' + str(self.handlerNode.node_count))
+                    f.write(' Total Step: ' + str(len(self.handlerNode.solution_path)))
+                    # Dialog message
+                    dialog_msg = '<b>Final<br><br>Total time: '+str(time.strftime('%M:%S', time.gmtime(execute_time)))+' seconds'+'<br>Visited Node :'+str(self.handlerNode.node_count)+'<br>Steps: '+str(len(self.handlerNode.solution_path))+'</b><br>'
+                    rect_win = pygame.Rect((settings.SCREEN_WIDTH/2 - (300/2), settings.SCREEN_HEIGHT/2 - (150/2)), (300, 300))
+                    self.dialog_win = pygame_gui.windows.ui_confirmation_dialog.UIConfirmationDialog(rect = rect_win,
+                                                                                            action_long_desc = dialog_msg,
+                                                                                            window_title ='Solution info',
+                                                                                            manager = self.ui_manager)
                 else:
-                    f.write('No solution' + '\n')
-                self.is_solve = False
+                    f.write(' No Solution')
+                    # Dialog message
+                    dialog_msg = 'No Solution'
+                    rect_win = pygame.Rect((settings.SCREEN_WIDTH/2 - (300/2), settings.SCREEN_HEIGHT/2 - (150/2)), (300, 300))
+                    self.dialog_win = pygame_gui.windows.ui_confirmation_dialog.UIConfirmationDialog(rect = rect_win,
+                                                                                            action_long_desc = dialog_msg,
+                                                                                            window_title ='Solution info',
+                                                                                            manager = self.ui_manager)
+                f.write('\n')
                 f.close()
+                self.is_solve = False
+
 
         if _event.type == pygame_gui.UI_DROP_DOWN_MENU_CHANGED and not self.is_play:
             if _event.ui_element == self.dropdown_choose_picture:
@@ -213,8 +283,7 @@ class Frame:
                     pass
 
         if _event.type == pygame_gui.UI_CONFIRMATION_DIALOG_CONFIRMED:
-            if _event.ui_element == self.dialog_win:
-                self.reset()
+            self.reset()
         
         if _event.type == pygame_gui.UI_FILE_DIALOG_PATH_PICKED:
             if _event.ui_element == self.file_dialog:
@@ -248,8 +317,10 @@ class Frame:
 
     def reset(self):
         self.handlerNode.shuffle_puzzle(self.handlerNode.root)
+        self.handlerNode.reset_handler()
         self.label_time.set_text('00:00:00')    
         self.step = 0
+        self.label_step.set_text('Step: '+str(0))
         self.label_percent.visible = False
         self.button_Play.visible = True
         self.button_Shuffle.visible = True
@@ -295,4 +366,4 @@ class Frame:
             self.dev.label_long_5.set_text('Solution length: ' + str(len(self.handlerNode.solution_path)))
         else:
             self.dev.label_long_5.set_text('Solution length: ' + 'None')
-
+# Final Build

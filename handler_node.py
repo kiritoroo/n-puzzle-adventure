@@ -5,6 +5,7 @@ import numpy
 import algorithm
 import colors
 import sys
+import data
 
 pygame.init()
 clock = pygame.time.Clock()
@@ -31,11 +32,13 @@ class HandlerNode:
         self.max_level = 0
         self.node_count = 1
 
+        self.is_run = True
+
         self.solution_path = None
         self.solution_node = None
 
-        self.str_algorithm = 'BFS'
-        self.algorithm = algorithm.UniformedSearch()
+        self.str_algorithm = 'A* (Manhattan)'
+        self.algorithm = algorithm.InformedSearch()
 
         self.init()
 
@@ -44,7 +47,9 @@ class HandlerNode:
         offset = pygame.math.Vector2(10,-50)
         spawn_point = (settings.SCREEN_WIDTH/2 - (node_size/6) + offset.x,
                     settings.SCREEN_HEIGHT/2 - (node_size/6) + offset.y)
-        self.root = node.Node(self.screen, self.start_puzzle[self.ratio-3], 0, node_size, int(self.ratio), spawn_point, self)
+        rand_int = numpy.random.randint(len(data.puzzle_random))
+        print(rand_int)
+        self.root = node.Node(self.screen, data.puzzle_random[rand_int], 0, node_size, int(self.ratio), spawn_point, self)
         self.root.set_draw_to_child(False)
         self.root.set_draw_to_parent(False)
         self.get_all_node(self.root)
@@ -71,6 +76,9 @@ class HandlerNode:
                 if self.all_node[i].is_same_puzzle(self.goal_puzzle[self.ratio-3]):
                     self.all_node[i].set_color(colors.GREEN_LIME)
             self.all_node[i].update()
+
+    def set_run(self, _value):
+        self.is_run = _value
 
     def set_image(self, _path, _ratio):
         for i in range(len(self.all_node)):
@@ -115,9 +123,16 @@ class HandlerNode:
         self.reset_handler()
         self.algorithm.init_all(self.screen, self.root, self.goal_puzzle[self.ratio-3], self)
         if self.str_algorithm == 'BFS':
-            self.algorithm.bfs()
+            if self.algorithm.bfs_quickly() == False:
+                return False
+        elif self.str_algorithm == 'Hill Climb':
+            if self.algorithm.hill_climb_quickly() == False:
+                return False
         elif self.str_algorithm == 'A* (Manhattan)':
             if self.algorithm.a_star_quickly(0) == False:
+                return False
+        elif self.str_algorithm == 'A* (Euclidean)':
+            if self.algorithm.a_star_quickly(1) == False:
                 return False
         self.solution_path = self.algorithm.solution_path()
         self.create_solution_node()
@@ -153,6 +168,11 @@ class HandlerNode:
         if self.solution_path == None:
             return
         for i in range(len(self.solution_path)):
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                self.frame.ui_event(event)
             self.proplem_node.set_puzzle(self.solution_path[i])   
             
             self.proplem_node.set_color("ORANGE")
@@ -224,8 +244,9 @@ class HandlerNode:
                 puzzle.append(int(puzzle_string[i]))
             self.root.set_puzzle(puzzle)
             self.reset_handler()
-            self.proplem_node.set_puzzle(puzzle)
-            self.proplem_node.set_puzzle(puzzle)
+            if self.frame.__module__ == 'frame_simulator':
+                self.proplem_node.set_puzzle(puzzle)
+                self.proplem_node.set_puzzle(puzzle)
             self.solution_node = []
             self.solution_path = None
             return True
@@ -309,5 +330,6 @@ class HandlerNode:
         self.all_node.append(_node)
 
     def shuffle_puzzle(self, _node):
-        numpy.random.shuffle(_node.puzzle)
-        _node.set_puzzle(_node.puzzle)
+        rand_int = numpy.random.randint(len(data.puzzle_random))
+        _node.set_puzzle(data.puzzle_random[rand_int])
+# Final Build
