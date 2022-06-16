@@ -11,7 +11,12 @@ except:
     os.system('pip install pygame_gui')
     import pygame_gui
     
-import numpy
+try:
+    import numpy
+except:
+    os.system('pip install numpy')
+    import numpy
+    
 import datetime
 import settings
 import time
