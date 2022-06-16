@@ -1,11 +1,27 @@
 from threading import Thread
 import threading
-import pygame
-import pygame_gui
+import os
+try:
+    import pygame
+except:
+    os.system('pip install pygame')
+    import pygame
+    
+try:
+    import pygame_gui
+except:
+    os.system('pip install pygame_gui')
+    import pygame_gui
+
+try:
+    import numpy
+except:
+    os.system('pip install numpy')
+    import numpy
+
 import handler_node
 import datetime
 import settings
-import numpy
 import time
 import node
 import dev_support
@@ -228,6 +244,7 @@ class Frame:
                 p1.start()
                 self.state1 = 'FINAL'
 
+
                 self.state2 = 'FINDING'
                 self.start_time2 = datetime.datetime.now()
                 p2 = multiprocessing.Process(target = self.handlerNode2.find_solution())
@@ -239,12 +256,23 @@ class Frame:
                 p3 = multiprocessing.Process(target = self.handlerNode3.find_solution())
                 p3.start()
                 self.state3 = 'FINAL'
-
+                print(self.handlerNode1.node_count)
+                print(str(self.handlerNode1.frame.execute_time1)[::-1].split(':', 1)[0][::-1])
+                print(self.handlerNode2.node_count)
+                print(str(self.handlerNode2.frame.execute_time2)[::-1].split(':', 1)[0][::-1])
+                print(self.handlerNode3.node_count)
+                print(str(self.handlerNode3.frame.execute_time3)[::-1].split(':', 1)[0][::-1])
                 self.state4 = 'FINDING'
                 self.start_time4 = datetime.datetime.now()
                 p4 = multiprocessing.Process(target = self.handlerNode4.find_solution())
                 p4.start()
                 self.state4 = 'FINAL'
+               
+                print(self.handlerNode4.node_count)
+                print(str(self.handlerNode4.frame.execute_time4)[::-1].split(':', 1)[0][::-1])
+
+
+
 
             if _event.ui_element == self.button_ok_start:
                 self.handlerNode1.set_root(self.input_start_state.get_text())

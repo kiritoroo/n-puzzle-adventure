@@ -1,4 +1,9 @@
-import pygame
+import os
+try:
+    import pygame
+except:
+    os.system('pip install pygame')
+    import pygame
 
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720

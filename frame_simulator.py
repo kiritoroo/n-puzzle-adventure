@@ -1,13 +1,29 @@
+import os
+try:
+    import pygame
+except:
+    os.system('pip install pygame')
+    import pygame
+    
+try:
+    import pygame_gui
+except:
+    os.system('pip install pygame_gui')
+    import pygame_gui
+
+try:
+    import numpy
+except:
+    os.system('pip install numpy')
+    import numpy
+
 from logging import root
-import pygame
-import pygame_gui
 import dev_support
 import settings
 import handler_node
 import node
 import time
 import datetime
-import numpy
 import data
 
 class Frame:
@@ -94,17 +110,19 @@ class Frame:
                                                         manager = self.ui_manager,
                                                         object_id = "#button_play_solution")
 
+        self.button_play_solution.visible = False
+
         # Panel
         rect_Pane1 = pygame.Rect((8,40), (120, 600))
         self.panel_1 = pygame_gui.elements.ui_panel.UIPanel(relative_rect = rect_Pane1,
                                                             starting_layer_height = 0,
                                                             manager = self.ui_manager)
 
-        rect_Pane2 = pygame.Rect((1110,10), (150, 700))
-        self.panel_2 = pygame_gui.elements.ui_panel.UIPanel(relative_rect = rect_Pane2,
-                                                            starting_layer_height = 0,
-                                                            manager= self.ui_manager,
-                                                            object_id = "#panel_2")
+        # rect_Pane2 = pygame.Rect((1110,10), (150, 700))
+        # self.panel_2 = pygame_gui.elements.ui_panel.UIPanel(relative_rect = rect_Pane2,
+        #                                                     starting_layer_height = 0,
+        #                                                     manager= self.ui_manager,
+        #                                                     object_id = "#panel_2")
 
         # Label
         rect_guide = pygame.Rect((2, 0), (250, 50))
@@ -177,7 +195,7 @@ class Frame:
             self.handlerNode.proplem_node.set_color("GREEN")
         else:
             self.handlerNode.proplem_node.set_color("ORANGE")
-        self.handlerNode.proplem_node.draw()
+        #self.handlerNode.proplem_node.draw()
 
     def update(self, _delta_time):
         if len(self.handlerNode.root.children) > 0:
