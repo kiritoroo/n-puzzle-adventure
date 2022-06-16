@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
-import os
-try:
-    import pygame
-except:
-    os.system('pip install pygame')
-    import pygame
-    
+import pygame
 import sys, time
 import settings
 import colors

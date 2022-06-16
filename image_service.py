@@ -1,10 +1,4 @@
-import os
-try:
-    import pygame
-except:
-    os.system('pip install pygame')
-    import pygame
-
+import pygame
 import colors
 
 def split_image(_path, _ratio):

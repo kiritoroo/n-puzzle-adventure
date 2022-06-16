@@ -1,0 +1,2 @@
+Open Terminal -> python main.py
+-> Enjoy Game

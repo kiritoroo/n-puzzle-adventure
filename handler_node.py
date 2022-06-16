@@ -1,18 +1,7 @@
-import os
-try:
-    import pygame
-except:
-    os.system('pip install pygame')
-    import pygame
-    
-try:
-    import numpy
-except:
-    os.system('pip install numpy')
-    import numpy
-
+import pygame
 import node
 import settings
+import numpy
 import algorithm
 import colors
 import sys
@@ -189,7 +178,7 @@ class HandlerNode:
             self.proplem_node.set_color("ORANGE")
             self.proplem_node.draw()
             pygame.display.update()
-            clock.tick(2)
+            clock.tick(5)
 
     def play_solution_root(self):
         if self.solution_path == None:
@@ -204,7 +193,7 @@ class HandlerNode:
             self.root.set_puzzle(self.solution_path[i])               
             self.root.draw()
             pygame.display.update()
-            clock.tick(2)
+            clock.tick(10)
     # End Algorithm
 
     # HARDCORE

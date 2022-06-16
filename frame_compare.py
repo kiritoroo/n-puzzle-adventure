@@ -1,27 +1,11 @@
 from threading import Thread
 import threading
-import os
-try:
-    import pygame
-except:
-    os.system('pip install pygame')
-    import pygame
-    
-try:
-    import pygame_gui
-except:
-    os.system('pip install pygame_gui')
-    import pygame_gui
-
-try:
-    import numpy
-except:
-    os.system('pip install numpy')
-    import numpy
-
+import pygame
+import pygame_gui
 import handler_node
 import datetime
 import settings
+import numpy
 import time
 import node
 import dev_support

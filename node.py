@@ -1,17 +1,6 @@
-import os
-try:
-    import pygame
-except:
-    os.system('pip install pygame')
-    import pygame
-
+import pygame
 import sys, time
-try:
-    import numpy
-except:
-    os.system('pip install numpy')
-    import numpy
-
+import numpy
 import settings
 import colors
 import image_service
