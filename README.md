@@ -22,23 +22,19 @@
 </p>
 
 ## Features
-- 8 Puzzle game 🎮
-- General Tree 🔧
-- Compare Algorithm 🍉
+### 8 Puzzle game 🎮
+![Play Game](https://github.com/kiritoroo/8-puzzle-advantages/blob/master/demo/play-game.PNG)
+
+### General Tree 🔧
+![General Tree](https://github.com/kiritoroo/8-puzzle-advantages/blob/master/demo/general-tree.PNG)
+
+### Compare Algorithm 🍉
+![Compare Algorithm](https://github.com/kiritoroo/8-puzzle-advantages/blob/master/demo/compare-algorithm.PNG)
 
 ## Request
 - Numpy: `pip install numpy`
 - Pygame: `pip install pygame`
 - Pygame GUI: `pip install pygame_gui`
-
-
-## Contributing
-1. [Fork the repository](https://github.com/kiritoroo/AI_Final_Project/fork)!
-2. Clone your fork: `git clone https://github.com/kiritoroo/AI_Final_Project.git`
-3. Create your feature branch: `git checkout -b my-new-feature`
-4. Commit your changes: `git commit -a -m 'Add some feature'`
-5. Push to the branch: `git push origin my-new-feature`
-6. Submit a pull request :D
 
 ## Author
 - > GitHub [Kiritoro](https://github.com/kiritoroo)
