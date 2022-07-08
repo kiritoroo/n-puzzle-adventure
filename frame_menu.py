@@ -1,5 +1,17 @@
-import pygame
-import pygame_gui
+import os
+
+try:
+    import pygame
+except:
+    os.system('pip install pygame')
+    import pygame
+
+try:
+    import pygame_gui
+except:
+    os.system('pip install pygame_gui')
+    import pygame_gui
+
 import sys
 
 import settings

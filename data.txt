@@ -410,3 +410,6 @@ Hill Climb
 [4, 2, 0, 1, 7, 5, 6, 8, 3] Visited Node: 409 Total Step: 29
 [4, 2, 0, 1, 7, 5, 6, 8, 3] Visited Node: 409 Total Step: 29
 [4 7 2 0 5 3 1 6 8] Visited Node: 651 Total Step: 38
+[3, 1, 2, 5, 6, 0, 4, 7, 8] Visited Node: 483 Total Step: 34
+[0, 1, 4, 2, 3, 5, 8, 6, 7] Visited Node: 527 Total Step: 29
+[1, 5, 3, 6, 2, 4, 0, 7, 8] Visited Node: 390 Total Step: 27

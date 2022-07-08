@@ -1,6 +1,23 @@
-import pygame
-import pygame_gui
-import numpy
+import os
+
+try:
+    import pygame
+except:
+    os.system('pip install pygame')
+    import pygame
+
+try:
+    import pygame_gui
+except:
+    os.system('pip install pygame_gui')
+    import pygame_gui
+
+try:
+    import numpy as np
+except:
+    os.system('pip install numpy')
+    import numpy as np
+    
 import datetime
 import settings
 import time

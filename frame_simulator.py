@@ -1,13 +1,30 @@
+import os
+
+try:
+    import pygame
+except:
+    os.system('pip install pygame')
+    import pygame
+
+try:
+    import pygame_gui
+except:
+    os.system('pip install pygame_gui')
+    import pygame_gui
+
+try:
+    import numpy as np
+except:
+    os.system('pip install numpy')
+    import numpy as np
+
 from logging import root
-import pygame
-import pygame_gui
 import dev_support
 import settings
 import handler_node
 import node
 import time
 import datetime
-import numpy
 import data
 
 class Frame:

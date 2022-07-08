@@ -1,5 +1,17 @@
-import pygame
-import numpy
+import os
+
+try:
+    import pygame
+except:
+    os.system('pip install pygame')
+    import pygame
+
+try:
+    import numpy as np
+except:
+    os.system('pip install numpy')
+    import numpy as np
+    
 import sys, time
 import settings
 import colors
