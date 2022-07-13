@@ -31,7 +31,7 @@
 ### Compare Algorithm 🍉
 ![Compare Algorithm](https://github.com/kiritoroo/8-puzzle-advantages/blob/master/demo/compare-algorithm.PNG)
 
-## Request
+## Require
 - Numpy: `pip install numpy`
 - Pygame: `pip install pygame`
 - Pygame GUI: `pip install pygame_gui`
