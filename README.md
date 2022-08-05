@@ -1,6 +1,6 @@
 <p align="center">
   <img width="140" src="https://th.bing.com/th/id/R.e38895a159ff5bbd8da2f1040b61d219?rik=295MoNJgHQ5mdw&riu=http%3a%2f%2fdomoticx.com%2fwp-content%2fuploads%2f2015%2f03%2fpygame-logo.gif&ehk=9x4o%2b8IHlhiml6%2fDd7aXtzZycOqLsy76QfuqCOqf%2fNw%3d&risl=&pid=ImgRaw&r=0&sres=1&sresct=1" />  
-  <h2 align="center">🎮 AI Final Project</h2>
+  <h2 align="center"> 🎮 AI Final Project </h2>
 <p align="center">
   <a href="https://github.com/kiritoroo/AI_Final_Project/issues">
     <img src="https://img.shields.io/github/issues/kiritoroo/AI_Final_Project"/> 
