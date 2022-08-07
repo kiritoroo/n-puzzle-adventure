@@ -7,10 +7,10 @@ except:
     import pygame
 
 try:
-    import numpy as np
+    import numpy
 except:
     os.system('pip install numpy')
-    import numpy as np
+    import numpy
 
 import node
 import settings
