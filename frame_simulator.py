@@ -13,10 +13,10 @@ except:
     import pygame_gui
 
 try:
-    import numpy as np
+    import numpy
 except:
     os.system('pip install numpy')
-    import numpy as np
+    import numpy
 
 from logging import root
 import dev_support
